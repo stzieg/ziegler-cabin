@@ -19,7 +19,7 @@ interface NotificationsTabProps {
  * Notifications Tab Component - Full notifications page
  * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5
  */
-export const NotificationsTab: React.FC<NotificationsTabProps> = ({ user, formState }) => {
+export const NotificationsTab: React.FC<NotificationsTabProps> = ({ user }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

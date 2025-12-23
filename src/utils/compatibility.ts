@@ -104,7 +104,9 @@ export const polyfills = {
   intersectionObserver: (): void => {
     if (!browserSupport.intersectionObserver()) {
       // Simple fallback - assume all elements are visible
-      (window as any).IntersectionObserver = class {
+      (window as any).IntersectionObserver = class MockIntersectionObserver {
+        private callback: Function;
+        
         constructor(callback: Function) {
           this.callback = callback;
         }
@@ -124,9 +126,10 @@ export const polyfills = {
   resizeObserver: (): void => {
     if (!browserSupport.resizeObserver()) {
       // Simple fallback using window resize
-      (window as any).ResizeObserver = class {
+      (window as any).ResizeObserver = class MockResizeObserver {
+        private handleResize: () => void;
+        
         constructor(callback: Function) {
-          this.callback = callback;
           this.handleResize = () => callback([]);
           window.addEventListener('resize', this.handleResize);
         }

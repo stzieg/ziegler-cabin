@@ -61,7 +61,7 @@ export const CalendarFormIntegration: React.FC<CalendarFormIntegrationProps> = (
   // Custom hooks for enhanced mobile experience
   const orientation = useOrientation();
   const { keyboardState } = useKeyboardAccessibility({
-    containerRef: mainContentRef,
+    containerRef: mainContentRef as React.RefObject<HTMLElement>,
     scrollOffset: 100,
     autoHandle: true,
   });

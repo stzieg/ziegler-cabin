@@ -22,7 +22,7 @@ interface MaintenanceFormData {
  * Maintenance Tab Component - Full maintenance logging system
  * Requirements: 3.1, 3.2, 3.3, 3.4, 3.5
  */
-export const MaintenanceTab: React.FC<MaintenanceTabProps> = ({ user, formState, isAdmin = false }) => {
+export const MaintenanceTab: React.FC<MaintenanceTabProps> = ({ user, formState }) => {
   const [tasks, setTasks] = useState<MaintenanceTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

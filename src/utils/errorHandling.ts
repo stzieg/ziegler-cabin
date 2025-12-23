@@ -1,15 +1,17 @@
 import { AuthError, PostgrestError } from '@supabase/supabase-js';
 
 // Error types for comprehensive error handling
-export enum ErrorType {
-  NETWORK_ERROR = 'NETWORK_ERROR',
-  SUPABASE_CONNECTION_ERROR = 'SUPABASE_CONNECTION_ERROR',
-  SESSION_EXPIRED = 'SESSION_EXPIRED',
-  AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  PERMISSION_ERROR = 'PERMISSION_ERROR',
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
-}
+export const ErrorType = {
+  NETWORK_ERROR: 'NETWORK_ERROR',
+  SUPABASE_CONNECTION_ERROR: 'SUPABASE_CONNECTION_ERROR',
+  SESSION_EXPIRED: 'SESSION_EXPIRED',
+  AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  PERMISSION_ERROR: 'PERMISSION_ERROR',
+  UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+} as const;
+
+export type ErrorType = typeof ErrorType[keyof typeof ErrorType];
 
 export interface AppError {
   type: ErrorType;

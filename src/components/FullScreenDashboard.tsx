@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/SupabaseProvider';
 import { ErrorDisplay } from './ErrorDisplay';
 import { ErrorBoundary } from './ErrorBoundary';

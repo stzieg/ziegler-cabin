@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { weatherService, type WeatherData, type WeatherForecast, type HourlyForecast } from '../utils/weatherService';
+import { weatherService, type WeatherData, type HourlyForecast } from '../utils/weatherService';
 import styles from './Weather.module.css';
 
 export interface WeatherProps {
@@ -46,16 +46,7 @@ export const Weather: React.FC<WeatherProps> = ({
     }
   };
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
-
-  const formatForecastDate = (dateString: string, index: number): string => {
+  const formatForecastDate = (dateString: string): string => {
     // dateString is in format "YYYY-MM-DD" from the weather service
     // We need to compare it directly without timezone conversion issues
     const today = new Date();
@@ -104,12 +95,6 @@ export const Weather: React.FC<WeatherProps> = ({
         return hourDateString === today && hourDate > now;
       })
       .slice(0, 8); // Next 8 intervals (24 hours)
-  };
-
-  const getNextDaysHourlyForecast = (hourlyData: HourlyForecast[], targetDate: string): HourlyForecast[] => {
-    return hourlyData
-      .filter(hour => hour.time.startsWith(targetDate))
-      .slice(0, 8); // 8 intervals per day
   };
 
   const getActivityRecommendation = (weather: WeatherData): string => {
@@ -225,7 +210,7 @@ export const Weather: React.FC<WeatherProps> = ({
             <div className={styles.hourlyForecast}>
               <h5>Today's Hourly Forecast</h5>
               <div className={styles.hourlyGrid}>
-                {getTodayHourlyForecast(weatherData.hourlyForecast).map((hour, index) => (
+                {getTodayHourlyForecast(weatherData.hourlyForecast).map((hour) => (
                   <div key={hour.time} className={styles.hourlyItem}>
                     <span className={styles.hourlyTime}>
                       {formatTime(hour.time)}
@@ -254,10 +239,10 @@ export const Weather: React.FC<WeatherProps> = ({
           <div className={styles.dailyForecast}>
             <h5>5-Day Forecast</h5>
             <div className={styles.forecastGrid}>
-              {weatherData.forecast.map((day, index) => (
+              {weatherData.forecast.map((day) => (
                 <div key={day.date} className={styles.forecastDay}>
                   <span className={styles.forecastDate}>
-                    {formatForecastDate(day.date, index)}
+                    {formatForecastDate(day.date)}
                   </span>
                   <img 
                     src={weatherService.getIconUrl(day.icon)}

@@ -105,7 +105,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
       // The listBuckets() API has issues but direct bucket access works fine
 
       // Upload file to Supabase Storage
-      const { data: uploadResult, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('photos')
         .upload(fileName, selectedFile, {
           cacheControl: '3600',

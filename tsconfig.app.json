@@ -5,7 +5,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -24,5 +24,16 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.property.test.ts",
+    "**/*.property.test.tsx",
+    "**/*.accessibility.test.tsx",
+    "**/*.errorHandling.test.tsx",
+    "**/*.formstate.property.test.tsx",
+    "**/*.styling.test.tsx",
+    "src/test/**/*"
+  ]
 }

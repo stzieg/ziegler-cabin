@@ -70,7 +70,6 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   expanded,
   visible,
   onTabChange,
-  onToggleExpanded,
   onClose,
 }) => {
   const { profile } = useAuth();

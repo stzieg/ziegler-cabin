@@ -18,7 +18,7 @@ interface CalendarTabProps {
  */
 const CalendarTabContent: React.FC<CalendarTabProps> = ({ user, formState }) => {
   const [notifications, setNotifications] = useState<string[]>([]);
-  const { viewState, reservationState, navigateToCalendar, navigateToReservation, clearReservationState } = useViewState();
+  const { navigateToCalendar, clearReservationState, viewState, reservationState } = useViewState();
 
   /**
    * Handle new reservation creation

@@ -112,15 +112,18 @@ export const useOptimizedAnimation = (
 
         // Update progress during animation
         const updateProgress = () => {
-          if (animationRef.current) {
-            const progress = animationRef.current.currentTime! / animationRef.current.effect!.getComputedTiming().duration!;
-            setAnimationState(prev => ({
-              ...prev,
-              progress: Math.min(progress, 1),
-            }));
+          if (animationRef.current && animationRef.current.currentTime !== null && animationRef.current.effect) {
+            const timing = animationRef.current.effect.getComputedTiming();
+            if (timing.duration && typeof timing.duration === 'number') {
+              const progress = (animationRef.current.currentTime as number) / timing.duration;
+              setAnimationState(prev => ({
+                ...prev,
+                progress: Math.min(progress, 1),
+              }));
 
-            if (progress < 1) {
-              requestAnimationFrame(updateProgress);
+              if (progress < 1) {
+                requestAnimationFrame(updateProgress);
+              }
             }
           }
         };

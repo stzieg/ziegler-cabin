@@ -58,8 +58,8 @@ export const ReservationScreen: React.FC<ReservationScreenProps> = ({
 
   // Custom hooks for enhanced mobile experience
   const orientation = useOrientation();
-  const { keyboardState, scrollToField } = useKeyboardAccessibility({
-    containerRef: mainContentRef,
+  const { keyboardState } = useKeyboardAccessibility({
+    containerRef: mainContentRef as React.RefObject<HTMLElement>,
     scrollOffset: 120,
     autoHandle: true,
   });

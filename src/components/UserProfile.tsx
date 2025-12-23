@@ -107,7 +107,7 @@ export const UserProfile: React.FC = () => {
       await updateProfile({
         first_name: editData.first_name!,
         last_name: editData.last_name!,
-        phone_number: editData.phone_number || null,
+        phone_number: editData.phone_number || undefined,
       });
 
       setIsEditing(false);

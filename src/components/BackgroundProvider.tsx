@@ -39,7 +39,7 @@ export const BackgroundProvider: React.FC<BackgroundProviderProps> = ({
     enableWebP: true,
   });
 
-  const { isLoading, isLoaded, error, preloadImages } = backgroundState;
+  const { isLoading, isLoaded, error } = backgroundState;
 
   // Preload images on mount for better performance using optimized cache
   useEffect(() => {

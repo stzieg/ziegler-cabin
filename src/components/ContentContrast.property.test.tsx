@@ -7,7 +7,7 @@
 import { render } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
-import { Dashboard, TabType } from './Dashboard';
+import { Dashboard, type TabType } from './Dashboard';
 import { ReservationScreen } from './ReservationScreen';
 import { HomePage } from './HomePage';
 import type { User } from '@supabase/supabase-js';

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { useAuth } from '../../contexts/SupabaseProvider';
 import styles from './ImportantInfoTab.module.css';
 
 interface ImportantInfoTabProps {
@@ -58,10 +57,9 @@ const MOCK_INFO: ImportantInfo[] = [
 /**
  * Important Information Tab Component
  */
-export const ImportantInfoTab: React.FC<ImportantInfoTabProps> = ({ user, formState, isAdmin }) => {
-  const [infoItems, setInfoItems] = useState<ImportantInfo[]>(MOCK_INFO);
+export const ImportantInfoTab: React.FC<ImportantInfoTabProps> = () => {
+  const [infoItems] = useState<ImportantInfo[]>(MOCK_INFO);
   const [filter, setFilter] = useState<'all' | 'emergency' | 'contact' | 'instruction' | 'policy'>('all');
-  const [loading, setLoading] = useState(false);
 
   /**
    * Get filtered information

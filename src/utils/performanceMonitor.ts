@@ -150,8 +150,8 @@ class PerformanceMonitor {
    */
   private getLoadTime(): number {
     const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-    if (navigation) {
-      return navigation.loadEventEnd - navigation.navigationStart;
+    if (navigation && navigation.loadEventEnd && navigation.fetchStart) {
+      return navigation.loadEventEnd - navigation.fetchStart;
     }
     return 0;
   }
@@ -200,7 +200,7 @@ export const usePerformanceMonitoring = (
  * Measure render time of a component
  */
 export const measureRenderTime = (componentName: string) => {
-  return (target: any, propertyName: string, descriptor: PropertyDescriptor) => {
+  return (_target: any, propertyName: string, descriptor: PropertyDescriptor) => {
     const method = descriptor.value;
 
     descriptor.value = function (...args: any[]) {

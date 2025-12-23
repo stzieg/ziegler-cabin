@@ -338,7 +338,7 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
       setError(null);
       setLastError(null);
       
-      const { data, error: updateError } = await withNetworkRecovery(async () => {
+      const { data } = await withNetworkRecovery(async () => {
         const { data, error } = await supabase
           .from('profiles')
           .update({

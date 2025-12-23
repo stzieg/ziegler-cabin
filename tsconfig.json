@@ -1,7 +1,21 @@
 {
   "files": [],
   "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.property.test.ts",
+    "**/*.property.test.tsx",
+    "**/*.accessibility.test.tsx",
+    "**/*.errorHandling.test.tsx",
+    "**/*.formstate.property.test.tsx",
+    "**/*.styling.test.tsx"
   ]
 }

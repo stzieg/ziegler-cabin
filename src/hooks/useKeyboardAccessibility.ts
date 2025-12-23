@@ -3,7 +3,7 @@
  * Requirements: 3.5 - Keyboard-aware form field positioning for mobile
  */
 
-import { useState, useEffect, useCallback, RefObject } from 'react';
+import { useState, useEffect, useCallback, type RefObject } from 'react';
 
 export interface KeyboardState {
   isVisible: boolean;
@@ -47,7 +47,7 @@ export const useKeyboardAccessibility = (
 
     const container = containerRef?.current || document.documentElement;
     const elementRect = element.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
+    container.getBoundingClientRect();
 
     // Calculate if element is hidden by virtual keyboard
     const viewportHeight = window.visualViewport?.height || window.innerHeight;

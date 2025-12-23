@@ -18,27 +18,6 @@ interface HeaderNavigationProps {
   onLogout: () => void;
 }
 
-interface HeaderNavigationItem {
-  id: TabType;
-  label: string;
-  icon: string;
-  requiresAdmin?: boolean;
-}
-
-const HEADER_NAVIGATION_ITEMS: HeaderNavigationItem[] = [
-  {
-    id: 'profile',
-    label: 'Profile',
-    icon: '○',
-  },
-  {
-    id: 'admin',
-    label: 'Admin',
-    icon: '▼',
-    requiresAdmin: true,
-  },
-];
-
 /**
  * HeaderNavigation component - Top-right navigation for user functions
  */
@@ -58,11 +37,6 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
   
   // Check if user has admin permissions
   const isAdmin = profile?.is_admin || false;
-
-  // Filter navigation items based on user permissions
-  const availableItems = HEADER_NAVIGATION_ITEMS.filter(item => 
-    !item.requiresAdmin || isAdmin
-  );
 
   /**
    * Load notifications from database

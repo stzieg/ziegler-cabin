@@ -32,8 +32,8 @@ interface UseResponsiveBackgroundReturn {
  */
 export const useResponsiveBackground = ({
   images,
-  fallbackColor = '#2d3e1f',
-  loadingColor = '#1a2612',
+  fallbackColor: _fallbackColor = '#2d3e1f',
+  loadingColor: _loadingColor = '#1a2612',
   enableWebP = true,
 }: UseResponsiveBackgroundOptions): UseResponsiveBackgroundReturn => {
   const [currentImage, setCurrentImage] = useState<string>('');
