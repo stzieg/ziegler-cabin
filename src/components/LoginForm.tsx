@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { InputField } from './InputField';
 import { validateEmail, validatePassword, type FormErrors, debounce } from '../utils';
 import { useAuth } from '../contexts/SupabaseProvider';
+import { useKeyboardAccessibility } from '../hooks/useKeyboardAccessibility';
 import type { LoginData } from '../types/supabase';
 import styles from './LoginForm.module.css';
 
@@ -30,6 +31,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   error
 }) => {
   const { signIn } = useAuth();
+  const containerRef = useRef<HTMLFormElement>(null);
+  useKeyboardAccessibility({
+    containerRef: containerRef as React.RefObject<HTMLElement>,
+    scrollOffset: 120,
+    autoHandle: true,
+  });
+  
   const [state, setState] = useState<LoginFormState>({
     formData: {
       email: '',
@@ -193,6 +201,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <form 
+      ref={containerRef}
       className={styles.form} 
       onSubmit={handleSubmit}
       onKeyDown={handleKeyDown}

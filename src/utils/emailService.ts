@@ -19,7 +19,7 @@ export interface EmailSendResult {
 }
 
 export interface EmailServiceConfig {
-  provider: 'supabase' | 'sendgrid' | 'mailgun' | 'console';
+  provider: 'supabase' | 'sendgrid' | 'mailgun' | 'resend' | 'console';
   apiKey?: string;
   fromEmail?: string;
   fromName?: string;
@@ -80,6 +80,8 @@ export class EmailService {
           return await this.sendViaSendGrid(recipientEmail, subject, htmlContent, textContent);
         case 'mailgun':
           return await this.sendViaMailgun(recipientEmail, subject, htmlContent, textContent);
+        case 'resend':
+          return await this.sendViaResend(recipientEmail, subject, htmlContent, textContent);
         case 'console':
         default:
           return await this.sendViaConsole(recipientEmail, subject, htmlContent, textContent);
@@ -228,6 +230,95 @@ export class EmailService {
         userFriendlyError = 'Cannot connect to email proxy server. Please start the proxy server with: node email-proxy-server.js';
       } else if (error.message.includes('ECONNREFUSED')) {
         userFriendlyError = 'Email proxy server not running. Please start it with: node email-proxy-server.js';
+      }
+      
+      return {
+        success: false,
+        error: userFriendlyError
+      };
+    }
+  }
+
+  /**
+   * Send email via Resend
+   */
+  private async sendViaResend(
+    to: string,
+    subject: string,
+    html: string,
+    text: string
+  ): Promise<EmailSendResult> {
+    try {
+      // Validate configuration
+      if (!this.config.apiKey) {
+        throw new Error('Resend API key is required. Please set VITE_EMAIL_API_KEY in your .env file.');
+      }
+
+      if (!this.config.fromEmail) {
+        throw new Error('From email is required. Please set VITE_EMAIL_FROM in your .env file.');
+      }
+
+      console.log('Sending email via Resend:', {
+        to,
+        from: this.config.fromEmail,
+        subject,
+        apiKeyPrefix: this.config.apiKey?.substring(0, 10) + '...'
+      });
+
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.config.apiKey}`
+        },
+        body: JSON.stringify({
+          from: `${this.config.fromName} <${this.config.fromEmail}>`,
+          to: [to],
+          subject,
+          html,
+          text
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        let errorMessage = `Resend API error: ${response.status}`;
+        
+        try {
+          const errorJson = JSON.parse(errorData);
+          if (errorJson.message) {
+            errorMessage = errorJson.message;
+          }
+        } catch (parseError) {
+          errorMessage += ` - ${errorData}`;
+        }
+        
+        throw new Error(errorMessage);
+      }
+
+      const result = await response.json();
+      
+      console.log('Email sent successfully via Resend:', {
+        id: result.id,
+        to
+      });
+
+      return {
+        success: true,
+        messageId: result.id
+      };
+    } catch (error: any) {
+      console.error('Resend email sending error:', error);
+      
+      // Provide helpful error messages
+      let userFriendlyError = error.message;
+      
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        userFriendlyError = 'Cannot connect to Resend API. Please check your internet connection.';
+      } else if (error.message.includes('401')) {
+        userFriendlyError = 'Invalid Resend API key. Please check your VITE_EMAIL_API_KEY.';
+      } else if (error.message.includes('domain not verified')) {
+        userFriendlyError = 'Domain not verified in Resend. Please verify your domain in the Resend dashboard.';
       }
       
       return {

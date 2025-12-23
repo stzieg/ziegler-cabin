@@ -151,7 +151,7 @@
 .emptyState {
   text-align: center;
   padding: 4rem 2rem;
-  background: rgba(255, 255, 255, 0.7);
+  background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
@@ -186,7 +186,7 @@
   display: flex;
   gap: 1rem;
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.7);
+  background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.2s ease;
@@ -195,18 +195,18 @@
 }
 
 .notificationCard:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(248, 250, 252, 1);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .notificationCard.unread {
-  background: rgba(255, 248, 240, 0.9);
+  background: rgba(255, 248, 240, 1);
   border-left-color: var(--color-forest-green);
 }
 
 .notificationCard.unread:hover {
-  background: rgba(255, 248, 240, 1);
+  background: rgba(255, 245, 230, 1);
 }
 
 /* Notification Icon */

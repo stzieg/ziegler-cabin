@@ -22,25 +22,29 @@
 
 .formFields {
   margin-bottom: var(--spacing-4, 32px);
+  border: none;
+  padding: 0;
 }
 
 .submitButton {
+  display: block;
   width: 100%;
   max-width: 400px;
-  padding: var(--spacing-2, 16px) var(--spacing-4, 32px);
-  background: var(--button-bg-primary, #2d5016);
-  color: var(--button-text-primary, white);
+  padding: 16px 32px;
+  background: #2d5016;
+  color: white;
   border: none;
-  border-radius: var(--border-radius-base, 8px);
-  font-size: var(--font-size-base, 16px);
-  font-weight: var(--font-weight-semibold, 600);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
   font-family: var(--font-family-body);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  min-height: var(--touch-target-min, 44px);
-  box-shadow: var(--shadow-subtle, 0 2px 4px rgba(0, 0, 0, 0.1));
+  min-height: 44px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+  margin-top: 16px;
 }
 
 .submitButton::before {
@@ -71,8 +75,8 @@
 }
 
 .submitButton:disabled {
-  background: var(--button-bg-disabled, #9e9e94);
-  color: var(--color-medium-gray, #9e9e94);
+  background: #9e9e94;
+  color: white;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;

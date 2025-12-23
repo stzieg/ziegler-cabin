@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { InputField } from './InputField';
 import { validateEmail } from '../utils/validation';
 import { createAndSendInvitation } from '../utils/invitations';
+import { useKeyboardAccessibility } from '../hooks/useKeyboardAccessibility';
 import type { Invitation } from '../types/supabase';
 import styles from './InvitationForm.module.css';
 
@@ -35,6 +36,12 @@ export const InvitationForm: React.FC<InvitationFormProps> = ({
   });
 
   const emailInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLFormElement>(null);
+  useKeyboardAccessibility({
+    containerRef: containerRef as React.RefObject<HTMLElement>,
+    scrollOffset: 120,
+    autoHandle: true,
+  });
 
   /**
    * Set focus to email input on mount for accessibility
@@ -174,6 +181,7 @@ export const InvitationForm: React.FC<InvitationFormProps> = ({
 
   return (
     <form 
+      ref={containerRef}
       className={styles.form} 
       onSubmit={handleSubmit}
       onKeyDown={handleKeyDown}
@@ -229,17 +237,30 @@ export const InvitationForm: React.FC<InvitationFormProps> = ({
         <div id="email-help" className="visually-hidden">
           Enter the email address of the person you want to invite to the cabin management system.
         </div>
+        
+        <button
+          type="submit"
+          disabled={state.isSubmitting || !state.email.trim()}
+          aria-describedby="submit-help"
+          style={{
+            display: 'block',
+            width: '100%',
+            maxWidth: '400px',
+            padding: '16px 32px',
+            background: state.isSubmitting || !state.email.trim() ? '#9e9e94' : '#2d5016',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: 600,
+            cursor: state.isSubmitting || !state.email.trim() ? 'not-allowed' : 'pointer',
+            minHeight: '44px',
+            marginTop: '24px',
+          }}
+        >
+          {state.isSubmitting ? 'Sending Invitation...' : 'Send Invitation'}
+        </button>
       </fieldset>
-
-      <button
-        type="submit"
-        className={styles.submitButton}
-        disabled={state.isSubmitting || !state.email.trim()}
-        aria-describedby="submit-help"
-        aria-live="polite"
-      >
-        {state.isSubmitting ? 'Sending Invitation...' : 'Send Invitation'}
-      </button>
 
       <div id="submit-help" className={styles.helpText}>
         The invitation will be valid for 7 days and include a registration link.

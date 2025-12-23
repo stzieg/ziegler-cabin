@@ -30,6 +30,7 @@ export const MaintenanceTab: React.FC<MaintenanceTabProps> = ({ user, formState 
   const [editingTask, setEditingTask] = useState<MaintenanceTask | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'in_progress' | 'completed'>('in_progress');
 
   const [formData, setFormData] = useState<MaintenanceFormData>({
     title: '',
@@ -43,6 +44,25 @@ export const MaintenanceTab: React.FC<MaintenanceTabProps> = ({ user, formState 
   useEffect(() => {
     loadMaintenanceTasks();
   }, []);
+
+  /**
+   * Get filtered tasks based on current filter
+   */
+  const getFilteredTasks = () => {
+    switch (filter) {
+      case 'in_progress':
+        return tasks.filter(t => (t as any).status !== 'completed');
+      case 'completed':
+        return tasks.filter(t => (t as any).status === 'completed');
+      case 'all':
+      default:
+        return tasks;
+    }
+  };
+
+  const filteredTasks = getFilteredTasks();
+  const inProgressCount = tasks.filter(t => (t as any).status !== 'completed').length;
+  const completedCount = tasks.filter(t => (t as any).status === 'completed').length;
 
   // Restore form state if provided
   useEffect(() => {
@@ -345,102 +365,78 @@ export const MaintenanceTab: React.FC<MaintenanceTabProps> = ({ user, formState 
         </div>
       )}
 
+      {/* Filter Tabs */}
+      <div className={styles.filterTabs}>
+        <button
+          className={`${styles.filterTab} ${filter === 'in_progress' ? styles.active : ''}`}
+          onClick={() => setFilter('in_progress')}
+        >
+          In Progress ({inProgressCount})
+        </button>
+        <button
+          className={`${styles.filterTab} ${filter === 'completed' ? styles.active : ''}`}
+          onClick={() => setFilter('completed')}
+        >
+          Completed ({completedCount})
+        </button>
+        <button
+          className={`${styles.filterTab} ${filter === 'all' ? styles.active : ''}`}
+          onClick={() => setFilter('all')}
+        >
+          All ({tasks.length})
+        </button>
+      </div>
+
       {/* Tasks List */}
       <div className={styles.tasksList}>
         {tasks.length === 0 ? (
           <div className={styles.emptyState}>
             No maintenance tasks found. Add your first task above.
           </div>
+        ) : filteredTasks.length === 0 ? (
+          <div className={styles.emptyState}>
+            {filter === 'in_progress' && 'No tasks in progress.'}
+            {filter === 'completed' && 'No completed tasks.'}
+            {filter === 'all' && 'No tasks found.'}
+          </div>
         ) : (
-          <>
-            {/* In Progress Tasks */}
-            {tasks.filter(t => (t as any).status !== 'completed').length > 0 && (
-              <div className={styles.taskSection}>
-                <h3 className={styles.sectionTitle}>In Progress</h3>
-                <div className={styles.tasksGrid}>
-                  {tasks.filter(t => (t as any).status !== 'completed').map((task) => (
-                    <div key={task.id} className={styles.taskCard}>
-                      <div className={styles.taskHeader}>
-                        <h4>{task.title}</h4>
-                        <span className={`${styles.taskType} ${styles[task.task_type]}`}>
-                          {task.task_type}
-                        </span>
-                      </div>
-                      <div className={styles.taskDetails}>
-                        <p><strong>Date:</strong> {new Date(task.completion_date).toLocaleDateString()}</p>
-                        {task.cost != null && <p><strong>Cost Estimate:</strong> ${task.cost.toFixed(2)}</p>}
-                        {task.description && <p><strong>Description:</strong> {task.description}</p>}
-                      </div>
-                      <div className={styles.taskActions}>
-                        <button 
-                          onClick={() => handleToggleStatus(task)}
-                          className={styles.completeButton}
-                        >
-                          Mark Complete
-                        </button>
-                        <button 
-                          onClick={() => handleEdit(task)}
-                          className={styles.editButton}
-                        >
-                          Edit
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(task.id)}
-                          className={styles.deleteButton}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+          <div className={styles.tasksGrid}>
+            {filteredTasks.map((task) => (
+              <div key={task.id} className={`${styles.taskCard} ${(task as any).status === 'completed' ? styles.completedCard : ''}`}>
+                <div className={styles.taskHeader}>
+                  <h4>{task.title}</h4>
+                  <span className={`${styles.taskType} ${styles[task.task_type]}`}>
+                    {task.task_type}
+                  </span>
+                </div>
+                <div className={styles.taskDetails}>
+                  <p><strong>Date:</strong> {new Date(task.completion_date).toLocaleDateString()}</p>
+                  {task.cost != null && <p><strong>Cost Estimate:</strong> ${task.cost.toFixed(2)}</p>}
+                  {task.description && <p><strong>Description:</strong> {task.description}</p>}
+                </div>
+                <div className={styles.taskActions}>
+                  <button 
+                    onClick={() => handleToggleStatus(task)}
+                    className={(task as any).status === 'completed' ? styles.reopenButton : styles.completeButton}
+                  >
+                    {(task as any).status === 'completed' ? 'Reopen' : 'Mark Complete'}
+                  </button>
+                  <button 
+                    onClick={() => handleEdit(task)}
+                    className={styles.editButton}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(task.id)}
+                    className={styles.deleteButton}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
-            )}
-
-            {/* Completed Tasks */}
-            {tasks.filter(t => (t as any).status === 'completed').length > 0 && (
-              <div className={styles.taskSection}>
-                <h3 className={styles.sectionTitle}>Completed</h3>
-                <div className={styles.tasksGrid}>
-                  {tasks.filter(t => (t as any).status === 'completed').map((task) => (
-                    <div key={task.id} className={`${styles.taskCard} ${styles.completedCard}`}>
-                      <div className={styles.taskHeader}>
-                        <h4>{task.title}</h4>
-                        <span className={`${styles.taskType} ${styles[task.task_type]}`}>
-                          {task.task_type}
-                        </span>
-                      </div>
-                      <div className={styles.taskDetails}>
-                        <p><strong>Date:</strong> {new Date(task.completion_date).toLocaleDateString()}</p>
-                        {task.cost != null && <p><strong>Cost Estimate:</strong> ${task.cost.toFixed(2)}</p>}
-                        {task.description && <p><strong>Description:</strong> {task.description}</p>}
-                      </div>
-                      <div className={styles.taskActions}>
-                        <button 
-                          onClick={() => handleToggleStatus(task)}
-                          className={styles.reopenButton}
-                        >
-                          Reopen
-                        </button>
-                        <button 
-                          onClick={() => handleEdit(task)}
-                          className={styles.editButton}
-                        >
-                          Edit
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(task.id)}
-                          className={styles.deleteButton}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </>
+            ))}
+          </div>
         )}
       </div>
 

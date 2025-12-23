@@ -1,0 +1,211 @@
+.container {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(45, 80, 22, 0.1);
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.title {
+  color: var(--color-forest-green, #2d5016);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.description {
+  color: #4a6741;
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.configInfo {
+  background: rgba(45, 80, 22, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.configInfo h4 {
+  color: var(--color-forest-green, #2d5016);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.configInfo ul {
+  margin: 0;
+  padding-left: 16px;
+  list-style-type: disc;
+}
+
+.configInfo li {
+  color: #4a6741;
+  font-size: 13px;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.successMessage {
+  background: var(--color-success-green, #558b2f);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.errorMessage {
+  background: var(--color-error-red, #c62828);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  word-wrap: break-word;
+}
+
+.testForm {
+  margin-bottom: 20px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.testButton,
+.connectionButton {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  min-height: 44px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.testButton {
+  background: var(--color-forest-green, #2d5016);
+  color: white;
+}
+
+.testButton:hover:not(:disabled) {
+  background: #234010;
+  transform: translateY(-1px);
+}
+
+.connectionButton {
+  background: rgba(45, 80, 22, 0.1);
+  color: var(--color-forest-green, #2d5016);
+  border: 1px solid rgba(45, 80, 22, 0.2);
+}
+
+.connectionButton:hover:not(:disabled) {
+  background: rgba(45, 80, 22, 0.15);
+  transform: translateY(-1px);
+}
+
+.testButton:disabled,
+.connectionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.resultDisplay {
+  background: rgba(45, 80, 22, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.resultDisplay h4 {
+  color: var(--color-forest-green, #2d5016);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.resultJson {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 12px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 12px;
+  color: #495057;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+}
+
+.helpText {
+  background: rgba(45, 80, 22, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.helpText h4 {
+  color: var(--color-forest-green, #2d5016);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.helpText ul {
+  margin: 0;
+  padding-left: 16px;
+  list-style-type: disc;
+}
+
+.helpText li {
+  color: #4a6741;
+  font-size: 13px;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+/* Mobile Responsive */
+@media (max-width: 767px) {
+  .container {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+  }
+
+  .testButton,
+  .connectionButton {
+    flex: none;
+    min-width: auto;
+  }
+
+  .configInfo,
+  .resultDisplay,
+  .helpText {
+    padding: 12px;
+  }
+
+  .resultJson {
+    font-size: 11px;
+    padding: 8px;
+  }
+}

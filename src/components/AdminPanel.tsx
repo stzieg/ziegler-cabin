@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/SupabaseProvider';
 import { InvitationForm } from './InvitationForm';
 import { InvitationList } from './InvitationList';
-import { TestNotificationButton } from './TestNotificationButton';
+import { EmailTester } from './EmailTester';
 import { isUserAdmin } from '../utils/supabase';
 import { getAllInvitations } from '../utils/invitations';
 import type { Invitation } from '../types/supabase';
@@ -151,14 +151,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = () => {
           />
         </section>
 
-        <section className={styles.section} aria-labelledby="test-notifications-title">
-          <h2 className={styles.sectionTitle} id="test-notifications-title">Test Notifications</h2>
-          <p style={{ marginBottom: '1rem', color: '#6b7280' }}>
-            Create test notifications to verify the system is working
-          </p>
-          <TestNotificationButton />
-        </section>
-
         <section className={styles.section} aria-labelledby="invitation-management-title">
           <h2 className={styles.sectionTitle} id="invitation-management-title">Invitation Management</h2>
           <InvitationList 
@@ -166,6 +158,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = () => {
             onRefresh={handleRefresh}
             isLoading={isLoading}
           />
+        </section>
+
+        <section className={styles.section} aria-labelledby="email-tester-title">
+          <h2 className={styles.sectionTitle} id="email-tester-title">Email System Tester</h2>
+          <EmailTester />
         </section>
       </div>
     </main>

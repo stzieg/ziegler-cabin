@@ -3,6 +3,7 @@ import { InputField } from './InputField';
 import { validateForm, type FormErrors, debounce } from '../utils';
 import { validateInvitationToken } from '../utils/invitations';
 import { registerWithInvitation } from '../utils/auth';
+import { useKeyboardAccessibility } from '../hooks/useKeyboardAccessibility';
 import type { RegistrationData } from '../types/supabase';
 import styles from './LoginForm.module.css'; // Reuse existing styles
 
@@ -49,6 +50,12 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   });
 
   const firstInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLFormElement>(null);
+  useKeyboardAccessibility({
+    containerRef: containerRef as React.RefObject<HTMLElement>,
+    scrollOffset: 120,
+    autoHandle: true,
+  });
 
   /**
    * Validate invitation token on component mount and when token changes
@@ -259,6 +266,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
   return (
     <form 
+      ref={containerRef}
       className={styles.form} 
       onSubmit={handleSubmit}
       onKeyDown={handleKeyDown}
