@@ -1,0 +1,53 @@
+/* ViewTransition Component Styles */
+/* Requirements: 4.2 - Smooth transition animations */
+
+.viewTransition {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-duration, 300ms) ease-out;
+}
+
+/* Fade animation */
+.fade {
+  opacity: 1;
+}
+
+.fade.transitioning {
+  opacity: 0;
+}
+
+/* Slide animation */
+.slide {
+  transform: translateX(0);
+}
+
+.slide.transitioning {
+  transform: translateX(-100%);
+}
+
+/* Scale animation */
+.scale {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.scale.transitioning {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .viewTransition {
+    transition: none !important;
+  }
+  
+  .fade.transitioning,
+  .slide.transitioning,
+  .scale.transitioning {
+    opacity: 1;
+    transform: none;
+  }
+}

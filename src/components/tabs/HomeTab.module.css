@@ -1,0 +1,196 @@
+/* HomeTab Component Styles */
+
+.homeTab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  padding: var(--spacing-6);
+  padding-top: var(--spacing-8);
+  gap: var(--spacing-4);
+}
+
+.welcomeCard {
+  padding: var(--spacing-4);
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.greeting {
+  margin: 0 0 var(--spacing-2) 0;
+  color: var(--color-forest-green);
+  font-size: 2.75rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.8);
+}
+
+.subtitle {
+  margin: 0;
+  color: #4a6741;
+  font-size: 1.125rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+.infoCard {
+  background: rgba(255, 255, 255, 0.7);
+  padding: var(--spacing-6);
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  max-width: 500px;
+  width: 100%;
+}
+
+.infoCard h2 {
+  margin: 0 0 var(--spacing-3) 0;
+  color: var(--color-deep-brown);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.infoCard p {
+  margin: 0;
+  color: var(--color-deep-brown);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Navigation Grid */
+.navGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-4);
+  max-width: 900px;
+  width: 100%;
+}
+
+.navButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-6) var(--spacing-4);
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  color: #6b7280;
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--color-forest-green);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  color: var(--color-forest-green);
+}
+
+.navButton:hover .navButtonIcon {
+  color: var(--color-forest-green);
+  transform: scale(1.1);
+}
+
+.navButton:focus-visible {
+  outline: 2px solid var(--color-forest-green);
+  outline-offset: 2px;
+}
+
+.navButton:active {
+  transform: translateY(0);
+}
+
+.navButtonIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.navButtonIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.navButtonLabel {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-forest-green);
+}
+
+.navButtonDescription {
+  font-size: 0.875rem;
+  color: #4a6741;
+  line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .homeTab {
+    padding: var(--spacing-4);
+  }
+
+  .welcomeCard {
+    padding: var(--spacing-6) var(--spacing-3);
+  }
+
+  .greeting {
+    font-size: 1.875rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .infoCard {
+    padding: var(--spacing-4);
+  }
+
+  .infoCard h2 {
+    font-size: 1.25rem;
+  }
+
+  .navGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-3);
+    max-width: 600px;
+  }
+
+  .navButton {
+    padding: var(--spacing-4) var(--spacing-3);
+    gap: var(--spacing-2);
+  }
+
+  .navButtonIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .navButtonLabel {
+    font-size: 0.9375rem;
+  }
+
+  .navButtonDescription {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .navGrid {
+    grid-template-columns: 1fr;
+  }
+}

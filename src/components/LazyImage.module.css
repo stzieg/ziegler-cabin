@@ -1,0 +1,96 @@
+/* Lazy Image Component Styles */
+/* Requirements: 7.1 - Performance optimization for image loading */
+
+.lazy-image-container {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-loading-color, #f0f0f0);
+}
+
+.lazy-image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-loading-color, #f0f0f0);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.lazy-image-skeleton {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--bg-loading-color, #f0f0f0) 25%,
+    var(--bg-fallback-color, #e0e0e0) 50%,
+    var(--bg-loading-color, #f0f0f0) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.lazy-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.lazy-image.loading {
+  opacity: 0;
+}
+
+.lazy-image.loaded {
+  opacity: 1;
+}
+
+.lazy-image-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-fallback-color, #e0e0e0);
+  color: #666;
+  font-size: 0.875rem;
+}
+
+/* Performance optimizations */
+.lazy-image-container {
+  will-change: contents;
+}
+
+.lazy-image {
+  will-change: opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .lazy-image-placeholder,
+  .lazy-image {
+    transition: none;
+  }
+  
+  .lazy-image-skeleton {
+    animation: none;
+    background: var(--bg-loading-color, #f0f0f0);
+  }
+}

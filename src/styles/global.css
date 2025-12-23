@@ -1,0 +1,240 @@
+/* Global Styles */
+
+/* Import Google Fonts with font-display: swap for optimal loading - Requirement 5.4 */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap');
+
+/* Import responsive layout system */
+@import './responsive-layout.css';
+
+/* Import accessibility and performance optimizations */
+@import './accessibility.css';
+@import './performance.css';
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-heading);
+  color: var(--color-deep-brown);
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+}
+
+h3 {
+  font-size: var(--font-size-h3);
+}
+
+/* Links */
+a {
+  color: var(--color-forest-green);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-sage-green);
+}
+
+/* Form Elements */
+input,
+textarea,
+select {
+  border: var(--border-width-base) solid var(--input-border-color);
+  border-radius: var(--border-radius-base);
+  padding: var(--input-padding-vertical) var(--input-padding-horizontal);
+  background-color: white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--input-border-color-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+input.error,
+textarea.error,
+select.error {
+  border-color: var(--input-border-color-error);
+}
+
+input.valid,
+textarea.valid,
+select.valid {
+  border-color: var(--input-border-color-valid);
+}
+
+/* Buttons */
+button {
+  border-radius: var(--border-radius-base);
+  padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+  font-weight: var(--font-weight-medium);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  min-height: var(--touch-target-min);
+}
+
+button.primary {
+  background-color: var(--button-bg-primary);
+  color: var(--button-text-primary);
+}
+
+button.primary:hover:not(:disabled) {
+  background-color: var(--button-bg-primary-hover);
+}
+
+button.primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  background-color: var(--button-bg-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Enhanced Utility Classes - Requirements 2.1, 2.2, 2.3, 2.4 */
+.container {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--content-padding-mobile);
+  /* Prevent horizontal overflow - Requirement 2.4 */
+  box-sizing: border-box;
+  width: 100%;
+  /* Smooth responsive behavior */
+  transition: padding 0.3s ease;
+}
+
+/* Enhanced Responsive Container System */
+
+/* Mobile container - 320px to 767px - Requirements 2.1, 2.3 */
+@media (max-width: 767px) {
+  .container {
+    padding: var(--content-padding-mobile);
+    /* Ensure proper mobile spacing */
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+/* Small mobile container - 320px to 479px */
+@media (max-width: 479px) {
+  .container {
+    padding: var(--content-padding-mobile);
+  }
+}
+
+/* Tablet container - 768px to 1023px - Requirement 2.2 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    padding: var(--spacing-4);
+    max-width: 100%;
+  }
+}
+
+/* Desktop container - 1024px+ - Requirement 2.1 */
+@media (min-width: 1024px) {
+  .container {
+    padding: var(--content-padding-desktop);
+  }
+}
+
+/* Large desktop container - 1440px+ */
+@media (min-width: 1440px) {
+  .container {
+    padding: var(--content-padding-desktop);
+  }
+}
+
+/* Responsive Typography Utilities */
+.text-responsive {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  transition: font-size 0.3s ease;
+}
+
+/* Responsive Spacing Utilities */
+.spacing-responsive-sm {
+  margin: var(--spacing-1);
+}
+
+.spacing-responsive-md {
+  margin: var(--spacing-2);
+}
+
+.spacing-responsive-lg {
+  margin: var(--spacing-3);
+}
+
+.spacing-responsive-xl {
+  margin: var(--spacing-4);
+}
+
+/* Text Overflow Handling - Requirement 2.5 */
+.text-overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-overflow-wrap {
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.text-overflow-responsive {
+  /* Mobile: wrap text */
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+@media (min-width: 768px) {
+  .text-overflow-responsive {
+    /* Tablet and desktop: use ellipsis for long text */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: normal;
+    hyphens: none;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Error Messages */
+.error-message {
+  color: var(--color-error-red);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* Success Messages */
+.success-message {
+  color: var(--color-success-green);
+  font-size: 14px;
+  margin-top: 4px;
+}

@@ -1,0 +1,501 @@
+/* HeaderNavigation Component Styles */
+
+.headerNavigation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+/* Header Navigation Items */
+.headerNavItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6b7280;
+  position: relative;
+  padding: 0;
+}
+
+.headerNavItem svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.headerNavItem:hover {
+  background-color: rgba(45, 80, 22, 0.06);
+  color: #2D5016;
+}
+
+.headerNavItem:focus-visible {
+  outline: 2px solid #2D5016;
+  outline-offset: 2px;
+}
+
+.headerNavItem.active {
+  background-color: rgba(45, 80, 22, 0.1);
+  color: #2D5016;
+}
+
+.headerNavItem.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background-color: #2D5016;
+  border-radius: 1px;
+}
+
+/* Notifications Container */
+.notificationsContainer {
+  position: relative;
+}
+
+/* Notification Badge */
+.notificationBadge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #dc2626;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  min-width: 18px;
+}
+
+/* Notifications Dropdown */
+.notificationsDropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: 360px;
+  max-width: 90vw;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 50;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+.notificationsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.notificationsHeader h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.markAllReadButton {
+  background: none;
+  border: none;
+  color: var(--color-forest-green);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.markAllReadButton:hover {
+  background: rgba(45, 80, 22, 0.1);
+}
+
+.notificationsList {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notificationItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  position: relative;
+}
+
+.notificationItem:hover {
+  background: #f9fafb;
+}
+
+.notificationItem:last-child {
+  border-bottom: none;
+}
+
+.notificationItem.unread {
+  background: #fef7f0;
+}
+
+.notificationItem.unread:hover {
+  background: #fef3e2;
+}
+
+.notificationContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.notificationTitle {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.875rem;
+  line-height: 1.25;
+  margin-bottom: 0.25rem;
+}
+
+.notificationMessage {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+}
+
+.notificationTime {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-forest-green);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.emptyNotifications {
+  padding: 2rem;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.emptyNotifications p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.notificationsFooter {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.viewAllButton {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--color-forest-green);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.viewAllButton:hover {
+  background: rgba(45, 80, 22, 0.1);
+}
+
+/* User Menu Toggle */
+.userMenuToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.userMenuToggle:hover {
+  background-color: rgba(45, 80, 22, 0.06);
+  border-color: rgba(45, 80, 22, 0.2);
+  color: #2D5016;
+}
+
+.userMenuToggle:focus-visible {
+  outline: 2px solid #2D5016;
+  outline-offset: 2px;
+}
+
+.userMenuToggle.menuOpen {
+  background-color: rgba(45, 80, 22, 0.1);
+  border-color: rgba(45, 80, 22, 0.3);
+  color: #2D5016;
+}
+
+/* Navigation Icons */
+.navIcon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Dropdown Arrow */
+.dropdownArrow {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.userMenuToggle.menuOpen .dropdownArrow {
+  transform: rotate(180deg);
+}
+
+/* User Dropdown Menu */
+.userDropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 200px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* User Info Section */
+.userInfo {
+  padding: 0.75rem 1rem;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.userName {
+  font-weight: 500;
+  color: #111827;
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+
+.userEmail {
+  color: #6b7280;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  margin-top: 0.125rem;
+}
+
+/* Dropdown Items */
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.dropdownItem:hover {
+  background-color: rgba(45, 80, 22, 0.06);
+  color: #2D5016;
+}
+
+.dropdownItem:focus-visible {
+  outline: 2px solid #2D5016;
+  outline-offset: -2px;
+  background-color: rgba(45, 80, 22, 0.06);
+}
+
+.dropdownItem.active {
+  background-color: rgba(45, 80, 22, 0.1);
+  color: #2D5016;
+  font-weight: 500;
+}
+
+/* Dropdown Icons */
+.dropdownIcon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+}
+
+/* Dropdown Divider */
+.dropdownDivider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 0.25rem 0;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .headerNavigation {
+    gap: 0.25rem;
+  }
+
+  .headerNavItem {
+    width: 36px;
+    height: 36px;
+  }
+
+  .userMenuToggle {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .navIcon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .userDropdown {
+    min-width: 180px;
+    right: -0.5rem;
+  }
+
+  .notificationsDropdown {
+    width: 320px;
+    right: -0.5rem;
+  }
+
+  .notificationItem {
+    padding: 0.75rem;
+  }
+
+  .notificationTitle,
+  .notificationMessage {
+    font-size: 0.8125rem;
+  }
+
+  .notificationTime {
+    font-size: 0.6875rem;
+  }
+
+  .userName {
+    font-size: 0.8125rem;
+  }
+
+  .userEmail {
+    font-size: 0.6875rem;
+  }
+
+  .dropdownItem {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .headerNavItem {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .userMenuToggle {
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .dropdownItem {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .headerNavItem,
+  .userMenuToggle {
+    border: 1px solid transparent;
+  }
+
+  .headerNavItem:focus-visible,
+  .userMenuToggle:focus-visible {
+    border-color: currentColor;
+    outline: 2px solid currentColor;
+  }
+
+  .userDropdown {
+    border-color: currentColor;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .headerNavItem,
+  .userMenuToggle,
+  .dropdownItem,
+  .dropdownArrow {
+    transition: none;
+  }
+
+  .userDropdown {
+    animation: none;
+  }
+
+  .userMenuToggle.menuOpen .dropdownArrow {
+    transform: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .headerNavigation {
+    display: none;
+  }
+}

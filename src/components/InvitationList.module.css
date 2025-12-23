@@ -1,0 +1,628 @@
+.container {
+  width: 100%;
+  max-width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem; /* 24px - large spacing */
+  gap: 1rem; /* 16px - medium spacing */
+  padding: 0 0.5rem; /* 8px - small spacing for better alignment */
+}
+
+.headerInfo {
+  flex: 1;
+  min-width: 0; /* Prevent flex item from overflowing */
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-forest-green);
+  margin: 0 0 0.25rem 0;
+  line-height: 1.4;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #4a6741;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.refreshButton {
+  padding: 0.75rem 1rem;
+  background-color: var(--color-forest-green);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 2.75rem;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.refreshButton:hover:not(:disabled) {
+  background-color: #234010;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.refreshButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.refreshButton:disabled {
+  background-color: var(--color-medium-gray, #9E9E94);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.refreshButton:focus-visible {
+  outline: 2px solid var(--color-sage-green, #8BC34A);
+  outline-offset: 2px;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  padding: 2rem 1rem; /* 32px 16px - using rem units */
+  color: var(--color-charcoal, #424242);
+  background-color: #fafafa;
+  border-radius: 0.5rem; /* 8px */
+  border: 1px solid var(--color-light-gray, #E0E0D8);
+}
+
+.empty p {
+  margin: 0 0 0.5rem 0; /* 8px bottom margin */
+  font-size: 1rem; /* 16px - body text size */
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.emptySubtext {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 400;
+  color: var(--color-medium-gray, #9E9E94);
+  line-height: 1.4;
+}
+
+.listContainer {
+  border: 1px solid var(--color-light-gray, #E0E0D8);
+  border-radius: 0.75rem; /* 12px - more modern radius */
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background-color: white;
+}
+
+.list {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.invitationItem {
+  padding: 1.5rem; /* 24px - large spacing for better card feel */
+  border-bottom: 1px solid var(--color-light-gray, #E0E0D8);
+  transition: background-color 0.15s ease;
+  position: relative;
+}
+
+.invitationItem:hover {
+  background-color: #fafafa;
+}
+
+.invitationItem:last-child {
+  border-bottom: none;
+}
+
+.invitationItem:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1.5rem; /* 24px - indent the separator */
+  right: 1.5rem; /* 24px */
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--color-light-gray, #E0E0D8), transparent);
+}
+
+.invitationHeader {
+  margin-bottom: 1rem; /* 16px - medium spacing */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem; /* 16px */
+  /* Enhanced layout stability with varying content lengths - Requirement 2.5 */
+  min-height: 2.75rem; /* 44px - ensure consistent height */
+  overflow: hidden;
+}
+
+.emailContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* 12px */
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0; /* Allow text to wrap properly */
+  /* Enhanced layout stability - Requirement 2.5 */
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.email {
+  font-size: 1rem; /* 16px - body text size */
+  font-weight: 500;
+  color: var(--color-deep-brown, #3E2723);
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+  /* Enhanced text overflow handling - Requirement 2.5 */
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  /* Ensure graceful wrapping for long email addresses */
+  max-width: 100%;
+}
+
+.statusBadge {
+  padding: 0.375rem 0.75rem; /* 6px 12px - improved padding */
+  border-radius: 1rem; /* 16px - more rounded */
+  font-size: 0.75rem; /* 12px - small text size */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.statusPending {
+  background-color: var(--color-warning-amber, #F57C00);
+  color: white;
+  border-color: rgba(245, 124, 0, 0.2);
+}
+
+.statusUsed {
+  background-color: var(--color-success-green, #558B2F);
+  color: white;
+  border-color: rgba(85, 139, 47, 0.2);
+}
+
+.statusExpired {
+  background-color: var(--color-error-red, #C62828);
+  color: white;
+  border-color: rgba(198, 40, 40, 0.2);
+}
+
+.statusDefault {
+  background-color: var(--color-medium-gray, #9E9E94);
+  color: white;
+  border-color: rgba(158, 158, 148, 0.2);
+}
+
+.invitationDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* 8px - small spacing */
+  background-color: #fafafa;
+  padding: 0.75rem; /* 12px */
+  border-radius: 0.5rem; /* 8px */
+  border: 1px solid #f0f0f0;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem; /* 14px - form label size */
+  line-height: 1.4;
+}
+
+.detailLabel {
+  color: var(--color-medium-gray, #9E9E94);
+  font-weight: 500;
+  min-width: 4rem; /* 64px - slightly larger for better alignment */
+  flex-shrink: 0;
+}
+
+.detailValue {
+  color: var(--color-charcoal, #424242);
+  font-weight: 400;
+  text-align: right;
+  flex: 1;
+  margin-left: 0.5rem; /* 8px - small spacing */
+  /* Enhanced text overflow handling for dates - Requirement 2.5 */
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  /* Prevent layout breaking with long content */
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Responsive styles */
+
+/* Enhanced Mobile styles - 320px to 767px - Requirements 2.1, 2.3 */
+@media (max-width: 767px) {
+  .container {
+    padding: 0 var(--spacing-1);
+    /* Prevent horizontal overflow - Requirement 2.4 */
+    overflow-x: hidden;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-2);
+    padding: 0;
+  }
+
+  .title {
+    font-size: var(--font-size-h3);
+    /* Enhanced text wrapping - Requirement 2.5 */
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .subtitle {
+    font-size: calc(var(--font-size-base) - 1px);
+  }
+
+  .refreshButton {
+    align-self: flex-start;
+    min-height: var(--touch-target-min); /* Enhanced touch target - Requirement 2.3 */
+    padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+    font-size: var(--font-size-base);
+    /* Better touch interaction */
+    touch-action: manipulation;
+  }
+
+  .listContainer {
+    border-radius: var(--border-radius-base);
+  }
+
+  .invitationItem {
+    padding: var(--spacing-2);
+    /* Ensure proper touch spacing */
+    margin-bottom: 1px;
+  }
+
+  .invitationHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-2);
+  }
+
+  .emailContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-1);
+  }
+
+  .email {
+    font-size: var(--font-size-base);
+    /* Enhanced text overflow handling - Requirement 2.5 */
+    word-wrap: break-word;
+    word-break: break-all;
+    hyphens: auto;
+    overflow-wrap: break-word;
+  }
+
+  .actionButtons {
+    align-self: flex-end;
+    gap: var(--spacing-1);
+  }
+
+  .invitationDetails {
+    padding: var(--spacing-1);
+  }
+
+  .detailRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .detailValue {
+    text-align: left;
+    margin-left: 0;
+    /* Text overflow handling */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .detailLabel {
+    min-width: auto;
+    font-size: calc(var(--font-size-base) - 2px);
+  }
+
+  .statusBadge {
+    padding: 6px var(--spacing-1);
+    font-size: calc(var(--font-size-base) - 4px);
+    /* Ensure readable text */
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+  }
+
+  .deleteButton {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+    padding: var(--spacing-1);
+  }
+}
+
+/* Small mobile - 320px to 479px */
+@media (max-width: 479px) {
+  .container {
+    padding: 0 var(--spacing-1);
+  }
+
+  .invitationItem {
+    padding: var(--spacing-2);
+  }
+
+  .email {
+    font-size: calc(var(--font-size-base) - 1px);
+  }
+
+  .title {
+    font-size: calc(var(--font-size-h3) - 2px);
+  }
+}
+
+/* Enhanced Tablet styles - 768px to 1023px - Requirement 2.2 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    padding: 0 var(--spacing-1);
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: var(--font-size-h2);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .refreshButton {
+    min-height: var(--touch-target-min);
+    padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+    font-size: var(--font-size-base);
+    /* Touch-friendly on tablet */
+    touch-action: manipulation;
+  }
+
+  .invitationItem {
+    padding: var(--spacing-3);
+  }
+
+  .invitationDetails {
+    padding: var(--spacing-2);
+  }
+
+  .email {
+    font-size: var(--font-size-base);
+    /* Balanced text handling for tablet */
+    word-wrap: break-word;
+  }
+
+  .statusBadge {
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: calc(var(--font-size-base) - 3px);
+  }
+
+  .deleteButton {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+}
+
+/* Enhanced Desktop styles - 1024px+ - Requirement 2.1 */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: var(--font-size-h2);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .refreshButton {
+    min-height: var(--touch-target-min);
+    padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+    font-size: var(--font-size-base);
+  }
+
+  .listContainer {
+    border-radius: var(--border-radius-base);
+  }
+
+  .invitationItem {
+    padding: var(--spacing-3);
+  }
+
+  .invitationDetails {
+    padding: var(--spacing-2);
+  }
+
+  .email {
+    font-size: var(--font-size-base);
+    /* Enhanced desktop text overflow handling - Requirement 2.5 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    /* Ensure graceful fallback for very long emails */
+    max-width: calc(100% - 2rem);
+    min-width: 0;
+  }
+
+  .statusBadge {
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: calc(var(--font-size-base) - 3px);
+  }
+
+  .deleteButton {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+
+  /* Enhanced hover effects for desktop */
+  .invitationItem:hover .statusBadge {
+    transform: scale(1.05);
+  }
+
+  .invitationItem:hover .deleteButton {
+    border-color: var(--color-error-red);
+  }
+
+  .invitationItem:hover .email {
+    /* Show full text on hover with proper wrapping */
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+}
+
+/* Large desktop - 1440px+ */
+@media (min-width: 1440px) {
+  .invitationItem {
+    padding: var(--spacing-4);
+  }
+
+  .invitationDetails {
+    padding: var(--spacing-3);
+  }
+
+  .title {
+    font-size: var(--font-size-h1);
+  }
+}
+
+/* Touch interaction support */
+@media (hover: none) and (pointer: coarse) {
+  .refreshButton {
+    min-height: 2.75rem; /* 44px */
+    padding: 0.75rem 1rem; /* 12px 16px */
+  }
+  
+  .refreshButton:active {
+    transform: scale(0.98);
+  }
+
+  .deleteButton {
+    min-height: 2.75rem; /* 44px */
+    min-width: 2.75rem; /* 44px */
+  }
+
+  .invitationItem {
+    /* Ensure adequate spacing for touch interactions */
+    padding: 1.25rem; /* 20px */
+  }
+
+  .invitationItem:hover {
+    background-color: transparent; /* Disable hover on touch devices */
+  }
+
+  .statusBadge {
+    padding: 0.375rem 0.75rem; /* 6px 12px - ensure touch-friendly size */
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .statusBadge {
+    border-width: 2px;
+    border-style: solid;
+  }
+
+  .invitationItem {
+    border-bottom-width: 2px;
+  }
+
+  .listContainer {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .refreshButton,
+  .deleteButton,
+  .invitationItem,
+  .statusBadge {
+    transition: none;
+  }
+
+  .refreshButton:hover:not(:disabled),
+  .deleteButton:hover:not(:disabled) {
+    transform: none;
+  }
+}
+.actionButtons {
+  display: flex;
+  gap: 0.5rem; /* 8px - small spacing */
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.deleteButton {
+  padding: 0.5rem; /* 8px - equal padding for square button */
+  background-color: transparent;
+  color: var(--color-error-red, #d32f2f);
+  border: 1px solid var(--color-error-red, #d32f2f);
+  border-radius: 0.375rem; /* 6px */
+  font-size: 0.875rem; /* 14px */
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 2.75rem; /* 44px - minimum touch target */
+  height: 2.75rem; /* 44px - minimum touch target */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.deleteButton:hover:not(:disabled) {
+  background-color: var(--color-error-red, #d32f2f);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(211, 47, 47, 0.2);
+}
+
+.deleteButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.deleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.deleteButton:focus-visible {
+  outline: 2px solid var(--color-error-red, #d32f2f);
+  outline-offset: 2px;
+}

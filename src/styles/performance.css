@@ -1,0 +1,296 @@
+/* Performance Optimization Styles */
+/* Requirements: 7.1, 7.2 - Performance optimization for animations and rendering */
+
+/* GPU acceleration for better performance */
+.gpu-accelerated {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimized animations */
+.smooth-transition {
+  transition-property: transform, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.3s;
+}
+
+.fast-transition {
+  transition-property: transform, opacity;
+  transition-timing-function: ease-out;
+  transition-duration: 0.15s;
+}
+
+/* Lazy loading optimizations */
+.lazy-load {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.lazy-load.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Image optimization */
+.optimized-image {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Container queries for better performance */
+@container (min-width: 768px) {
+  .container-responsive {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Efficient flexbox layouts */
+.flex-optimized {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.flex-optimized > * {
+  flex: 1 1 auto;
+  min-width: 0; /* Prevent flex items from overflowing */
+}
+
+/* Grid optimizations */
+.grid-optimized {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+/* Scroll performance */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-optimized {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+}
+
+.scroll-snap-item {
+  scroll-snap-align: start;
+}
+
+/* Animation performance classes */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Loading states */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Intersection observer optimizations */
+.intersection-target {
+  min-height: 1px;
+  position: relative;
+}
+
+/* Critical CSS for above-the-fold content */
+.critical-content {
+  contain: layout style paint;
+}
+
+/* Non-critical content that can be deferred */
+.deferred-content {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Performance-optimized overlays */
+.overlay-optimized {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  will-change: opacity;
+  backface-visibility: hidden;
+}
+
+.overlay-optimized.interactive {
+  pointer-events: auto;
+}
+
+/* Efficient backdrop filters */
+.backdrop-blur {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Optimized shadows */
+.shadow-optimized {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Device-specific optimizations */
+@media (max-width: 767px) {
+  /* Mobile optimizations */
+  .mobile-optimized {
+    transform: translateZ(0);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Reduce animations on mobile for better performance */
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-scale-in {
+    animation-duration: 0.2s;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Desktop optimizations */
+  .desktop-optimized {
+    contain: layout style paint;
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .high-dpi-optimized {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Prefers reduced motion optimizations */
+@media (prefers-reduced-motion: reduce) {
+  .respect-motion-preference {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .skeleton {
+    animation: none;
+    background: #f0f0f0;
+  }
+}
+
+/* Memory-efficient styles */
+.memory-efficient {
+  contain: strict;
+  content-visibility: auto;
+}
+
+/* Efficient transforms */
+.transform-optimized {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Optimized focus states */
+.focus-optimized:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  transition: outline-offset 0.1s ease-out;
+}
+
+/* Efficient hover states */
+@media (hover: hover) {
+  .hover-optimized:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-out;
+  }
+}
+
+/* Print optimizations */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-optimized {
+    background: none !important;
+    box-shadow: none !important;
+    color: #000 !important;
+  }
+
+  /* Remove animations and transitions for print */
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+  .dark-mode-optimized {
+    color-scheme: dark;
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+    background-size: 200% 100%;
+  }
+}

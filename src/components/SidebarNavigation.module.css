@@ -1,0 +1,192 @@
+/* SidebarNavigation Component Styles */
+/* Requirements: 2.3, 2.4, 2.5, 9.1, 9.3, 9.4 */
+
+.sidebarNavigation {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.95);
+  border-right: 1px solid #e2e8f0;
+  transition: width 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 15;
+  height: 100%;
+  width: 280px; /* Default width - will be overridden by expanded/collapsed classes */
+}
+
+/* Expanded and Collapsed States - Requirements: 2.3, 2.4 */
+.sidebarNavigation.expanded {
+  width: 280px;
+}
+
+.sidebarNavigation.collapsed {
+  width: 0;
+  overflow: hidden;
+}
+
+/* Mobile Overlay Mode - Requirements: 4.1, 4.2 */
+.sidebarNavigation.visible {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px;
+  z-index: 25;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Navigation Sections */
+
+/* Home Navigation Section - Top of sidebar */
+.homeNavigation {
+  padding: var(--spacing-4) var(--spacing-2) var(--spacing-2);
+}
+
+.homeItem {
+  font-weight: 600;
+}
+
+/* Divider between home and main nav */
+.navDivider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: var(--spacing-2) var(--spacing-3);
+}
+
+/* Main Navigation Section - Requirements: 2.3 */
+.mainNavigation {
+  flex: 1;
+  padding: var(--spacing-2) var(--spacing-2) var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+/* User Navigation Section - Requirements: 9.1 */
+.userNavigation {
+  padding: var(--spacing-3) var(--spacing-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+/* Navigation Items - Requirements: 2.4, 2.5 */
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+  min-height: 48px;
+}
+
+.navItem:hover {
+  background-color: rgba(45, 80, 22, 0.06);
+  color: var(--color-forest-green);
+}
+
+.navItem:focus-visible {
+  outline: 2px solid var(--color-forest-green);
+  outline-offset: 2px;
+}
+
+.navItem.active {
+  background-color: rgba(45, 80, 22, 0.1);
+  color: var(--color-forest-green);
+  font-weight: 600;
+}
+
+.navIcon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+.navLabel {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Collapsed sidebar - completely hidden when collapsed */
+.sidebarNavigation.collapsed {
+  width: 0;
+  overflow: hidden;
+}
+
+/* Mobile Responsive Design - Requirements: 4.1, 4.2, 4.3 */
+@media (max-width: 768px) {
+  .sidebarNavigation {
+    display: none;
+  }
+
+  .sidebarNavigation.visible {
+    display: flex;
+    padding-top: 72px; /* Account for header height */
+  }
+}
+
+/* Tablet Responsive Design */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .sidebarNavigation.expanded {
+    width: 240px;
+  }
+}
+
+/* Desktop Responsive Design */
+@media (min-width: 1024px) {
+  .sidebarNavigation.expanded {
+    width: 280px;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .navItem {
+    min-height: 52px; /* Larger touch targets */
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .navItem {
+    border: 1px solid transparent;
+  }
+
+  .navItem:focus-visible {
+    border-color: currentColor;
+    outline: 2px solid currentColor;
+  }
+
+  .navItem.active {
+    border-color: var(--color-forest-green);
+    background-color: rgba(45, 80, 22, 0.15);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .sidebarNavigation,
+  .navItem {
+    transition: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .sidebarNavigation {
+    display: none;
+  }
+}

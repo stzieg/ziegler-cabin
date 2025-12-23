@@ -1,0 +1,334 @@
+.form {
+  max-width: var(--form-max-width, 720px);
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+}
+
+.description {
+  margin-bottom: var(--spacing-3, 24px);
+}
+
+.description p {
+  font-size: var(--font-size-base, 16px);
+  color: #4a6741;
+  margin: 0;
+  line-height: var(--line-height-base, 1.5);
+  font-weight: var(--font-weight-normal, 400);
+}
+
+.formFields {
+  margin-bottom: var(--spacing-4, 32px);
+}
+
+.submitButton {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--spacing-2, 16px) var(--spacing-4, 32px);
+  background: var(--button-bg-primary, #2d5016);
+  color: var(--button-text-primary, white);
+  border: none;
+  border-radius: var(--border-radius-base, 8px);
+  font-size: var(--font-size-base, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+  font-family: var(--font-family-body);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  min-height: var(--touch-target-min, 44px);
+  box-shadow: var(--shadow-subtle, 0 2px 4px rgba(0, 0, 0, 0.1));
+  position: relative;
+  overflow: hidden;
+}
+
+.submitButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--button-bg-primary-hover, #234010);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.25);
+}
+
+.submitButton:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(45, 80, 22, 0.2);
+}
+
+.submitButton:disabled {
+  background: var(--button-bg-disabled, #9e9e94);
+  color: var(--color-medium-gray, #9e9e94);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.submitButton:focus-visible {
+  outline: 3px solid var(--color-forest-green, #2d5016);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus, 0 0 0 3px rgba(45, 80, 22, 0.2));
+}
+
+.successMessage {
+  padding: var(--spacing-2, 16px);
+  background: var(--color-success-green, #558b2f);
+  color: white;
+  border-radius: var(--border-radius-base, 8px);
+  margin-bottom: var(--spacing-3, 24px);
+  text-align: center;
+  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--font-size-base, 16px);
+  line-height: var(--line-height-base, 1.5);
+  box-shadow: var(--shadow-subtle, 0 2px 4px rgba(0, 0, 0, 0.1));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideIn 0.3s ease-out;
+}
+
+.errorMessage {
+  padding: var(--spacing-2, 16px);
+  background: var(--color-error-red, #c62828);
+  color: white;
+  border-radius: var(--border-radius-base, 8px);
+  margin-bottom: var(--spacing-3, 24px);
+  text-align: center;
+  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--font-size-base, 16px);
+  line-height: var(--line-height-base, 1.5);
+  box-shadow: var(--shadow-subtle, 0 2px 4px rgba(0, 0, 0, 0.1));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideIn 0.3s ease-out;
+}
+
+.helpText {
+  margin-top: var(--spacing-2, 16px);
+  font-size: 14px;
+  color: var(--color-medium-gray, #9e9e94);
+  text-align: left;
+  line-height: var(--line-height-base, 1.5);
+  font-weight: var(--font-weight-normal, 400);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design System */
+
+/* Enhanced Mobile styles - 320px to 767px viewport - Requirements 2.1, 2.3 */
+@media (max-width: 767px) {
+  .form {
+    max-width: 100%;
+    padding: 0;
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+  }
+
+  .description {
+    margin-bottom: var(--spacing-2);
+  }
+
+  .description p {
+    font-size: var(--font-size-base);
+    line-height: 1.4;
+    /* Enhanced text wrapping - Requirement 2.5 */
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .formFields {
+    margin-bottom: var(--spacing-3);
+  }
+
+  .submitButton {
+    max-width: 100%;
+    padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+    font-size: 16px; /* Prevents iOS zoom */
+    min-height: var(--touch-target-min); /* Enhanced touch target - Requirement 2.3 */
+    /* Better touch feedback */
+    touch-action: manipulation;
+  }
+
+  .successMessage,
+  .errorMessage {
+    padding: var(--spacing-2);
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-2);
+    /* Text overflow handling */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .helpText {
+    font-size: calc(var(--font-size-base) - 2px);
+    margin-top: var(--spacing-1);
+    text-align: center;
+    line-height: 1.4;
+  }
+}
+
+/* Small mobile - 320px to 479px */
+@media (max-width: 479px) {
+  .submitButton {
+    padding: var(--button-padding-vertical) var(--spacing-2);
+    min-height: var(--touch-target-min);
+  }
+
+  .description p {
+    font-size: calc(var(--font-size-base) - 1px);
+  }
+
+  .helpText {
+    font-size: calc(var(--font-size-base) - 3px);
+  }
+}
+
+/* Enhanced Tablet styles - 768px to 1023px viewport - Requirement 2.2 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .form {
+    padding: 0;
+    max-width: var(--form-max-width);
+  }
+
+  .submitButton {
+    max-width: 350px;
+    padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+    min-height: var(--touch-target-min);
+    font-size: var(--font-size-base);
+    /* Touch-friendly on tablet */
+    touch-action: manipulation;
+  }
+
+  .description p {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+  }
+
+  .successMessage,
+  .errorMessage {
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+
+  .helpText {
+    font-size: calc(var(--font-size-base) - 2px);
+  }
+}
+
+/* Enhanced Desktop styles - 1024px+ viewport - Requirement 2.1 */
+@media (min-width: 1024px) {
+  .form {
+    padding: 0;
+    max-width: var(--form-max-width);
+  }
+
+  .submitButton {
+    max-width: 400px;
+    padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+    min-height: var(--touch-target-min);
+    font-size: var(--font-size-base);
+  }
+
+  .description p {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+  }
+
+  .successMessage,
+  .errorMessage {
+    font-size: var(--font-size-base);
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+
+  .helpText {
+    font-size: calc(var(--font-size-base) - 2px);
+  }
+}
+
+/* Large desktop - 1440px+ */
+@media (min-width: 1440px) {
+  .submitButton {
+    max-width: 450px;
+    padding: var(--spacing-2) var(--spacing-4);
+  }
+
+  .description p {
+    font-size: calc(var(--font-size-base) + 1px);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .form {
+    padding: 0;
+  }
+
+  .submitButton {
+    max-width: 100%;
+    min-height: 48px; /* Enhanced touch target */
+    padding: 16px var(--spacing-3, 24px);
+    font-size: 16px;
+  }
+  
+  .submitButton:active:not(:disabled) {
+    transform: scale(0.98);
+    transition: transform 0.1s ease-out;
+  }
+
+  /* Remove hover effects on touch devices */
+  .submitButton:hover:not(:disabled) {
+    transform: none;
+    box-shadow: var(--shadow-subtle, 0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .submitButton {
+    border: 2px solid transparent;
+  }
+
+  .submitButton:focus-visible {
+    outline-width: 4px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .submitButton,
+  .successMessage,
+  .errorMessage {
+    transition: none;
+    animation: none;
+  }
+
+  .submitButton:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .submitButton:active:not(:disabled) {
+    transform: none;
+  }
+}

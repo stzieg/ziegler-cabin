@@ -1,0 +1,469 @@
+.calendar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-2);
+  padding: 0 var(--spacing-1);
+}
+
+.navButton {
+  background: var(--color-forest-green);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background-color 0.2s ease;
+  min-height: var(--touch-target-min);
+}
+
+.navButton:hover {
+  background: var(--button-bg-primary-hover);
+}
+
+.navButton:focus {
+  outline: 2px solid var(--color-sage-green);
+  outline-offset: 2px;
+}
+
+.monthTitle {
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--color-forest-green);
+  margin: 0;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+}
+
+.dayHeaders {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  margin-bottom: 1px;
+  background: var(--color-light-gray, #e0e0e0);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dayHeader {
+  background: var(--color-off-white);
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-weight: var(--font-weight-semibold);
+  font-size: 0.875rem;
+  color: var(--color-charcoal);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 1px;
+  background: var(--color-light-gray, #e0e0e0);
+  border: 1px solid var(--color-light-gray, #e0e0e0);
+  width: 100%;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.day {
+  background: white;
+  border: none;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0; /* Allow shrinking */
+}
+
+.day:hover:not(:disabled) {
+  background: #f8f8f8;
+}
+
+.day:focus {
+  outline: 2px solid var(--color-sage-green);
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+.day:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.currentMonth {
+  color: var(--color-deep-brown);
+}
+
+.otherMonth {
+  color: var(--color-medium-gray);
+  background: #f5f5f5;
+}
+
+.today {
+  background: #f0f8ff !important; /* Light blue instead of green */
+  border: 2px solid #4a90e2 !important;
+  font-weight: var(--font-weight-semibold);
+}
+
+.hasReservation {
+  background: #e8f4e8;
+}
+
+/* Half-day cell styling for Fridays - vertical split */
+/* When reservation starts on Friday (right half reserved) */
+.halfDayCellStart {
+  background: linear-gradient(to right, white 50%, #e8f4e8 50%) !important;
+}
+
+/* When reservation ends on Friday (left half reserved) */
+.halfDayCellEnd {
+  background: linear-gradient(to right, #e8f4e8 50%, white 50%) !important;
+}
+
+/* When both start and end on same Friday - full split */
+.halfDayCellStart.halfDayCellEnd {
+  background: #e8f4e8 !important;
+}
+
+/* Ensure today styling takes precedence over reservation styling */
+.today.hasReservation {
+  background: #f0f8ff !important; /* Keep blue for today even with reservations */
+}
+
+/* Day content row with date and weather */
+.dayContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+.dayNumber {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+}
+
+/* Weather display in calendar day - top right */
+.dayWeather {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.weatherIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.weatherTemp {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--color-deep-brown);
+}
+
+.reservationIndicator {
+  font-size: 0.75rem;
+  color: var(--color-forest-green);
+  font-weight: var(--font-weight-medium);
+  margin-top: auto;
+  width: 100%;
+}
+
+/* When there are split reservations (one ending, one starting on same Friday) */
+.splitReservations {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+}
+
+.splitReservations .reservationName {
+  width: 50%;
+  flex-shrink: 0;
+}
+
+.reservationName {
+  background: #e8f4e8;
+  padding: 0.125rem 0.25rem;
+  border-radius: 4px;
+  margin-bottom: 0.125rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.7rem;
+  line-height: 1.2;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Half-day reservation styles for Fridays - positioned left or right */
+.halfDayStart {
+  margin-left: auto;
+  width: 50% !important;
+  border-left: 2px solid var(--color-forest-green);
+}
+
+.halfDayEnd {
+  margin-right: auto;
+  width: 50% !important;
+  border-right: 2px solid var(--color-forest-green);
+}
+
+.loading {
+  text-align: center;
+  padding: var(--spacing-4);
+  color: var(--color-charcoal);
+}
+
+.error {
+  background: #ffeaea;
+  color: var(--color-error-red);
+  padding: 0.75rem;
+  border-radius: var(--border-radius-base);
+  margin-top: var(--spacing-2);
+  border: 1px solid var(--color-error-red);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-2);
+}
+
+.modalContent {
+  background: white;
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-3);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-subtle);
+}
+
+.modalContent h3 {
+  margin: 0 0 var(--spacing-3) 0;
+  color: var(--color-deep-brown);
+  font-size: var(--font-size-h3);
+}
+
+.formGroup {
+  margin-bottom: var(--spacing-2);
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: var(--spacing-1);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-deep-brown);
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  padding: var(--input-padding-vertical) var(--input-padding-horizontal);
+  border: var(--border-width-base) solid var(--input-border-color);
+  border-radius: var(--border-radius-base);
+  font-size: var(--font-size-base);
+  transition: border-color 0.2s ease;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: var(--input-border-color-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+.formActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
+.submitButton {
+  background: var(--button-bg-primary);
+  color: var(--button-text-primary);
+  border: none;
+  padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+  border-radius: var(--border-radius-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-height: var(--touch-target-min);
+}
+
+.submitButton:hover {
+  background: var(--button-bg-primary-hover);
+}
+
+.deleteButton {
+  background: var(--color-error-red);
+  color: white;
+  border: none;
+  padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+  border-radius: var(--border-radius-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-height: var(--touch-target-min);
+}
+
+.deleteButton:hover {
+  background: #a52a2a;
+}
+
+.cancelButton {
+  background: var(--color-off-white);
+  color: var(--color-deep-brown);
+  border: var(--border-width-base) solid var(--color-light-gray);
+  padding: var(--button-padding-vertical) var(--button-padding-horizontal);
+  border-radius: var(--border-radius-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-height: var(--touch-target-min);
+}
+
+.cancelButton:hover {
+  background: #f0f0f0;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .calendar {
+    padding: 0.5rem;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .header {
+    margin-bottom: 0.75rem;
+  }
+  
+  .monthTitle {
+    font-size: 1.5rem;
+  }
+  
+  .navButton {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+  
+  .dayHeader {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.75rem;
+  }
+  
+  .day {
+    min-height: 3rem;
+    padding: 0.25rem;
+  }
+  
+  .dayNumber {
+    font-size: 0.75rem;
+  }
+
+  .dayWeather {
+    gap: 0;
+  }
+
+  .weatherIcon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .weatherTemp {
+    font-size: 0.5625rem;
+  }
+
+  .reservationIndicator {
+    font-size: 0.625rem;
+    width: 100%;
+  }
+  
+  .reservationName {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.2rem;
+    max-width: 100%;
+  }
+  
+  .modal {
+    padding: 0.5rem;
+  }
+  
+  .modalContent {
+    padding: 1rem;
+  }
+  
+  .formActions {
+    flex-direction: column;
+  }
+  
+  .submitButton,
+  .deleteButton,
+  .cancelButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Touch optimization for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .day {
+    min-height: 3.5rem;
+  }
+  
+  .navButton {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Tablet optimization */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .day {
+    min-height: 3.5rem;
+  }
+  
+  .modalContent {
+    max-width: 600px;
+  }
+}

@@ -1,0 +1,332 @@
+/* Background System - Foggy Woods Theme */
+/* Requirements: 6.1, 6.3, 6.5 */
+
+:root {
+  /* Background Image Paths */
+  --bg-foggy-woods-small: url('/images/backgrounds/foggy-woods-small.jpg');
+  --bg-foggy-woods-medium: url('/images/backgrounds/foggy-woods-medium.jpg');
+  --bg-foggy-woods-large: url('/images/backgrounds/foggy-woods-large.jpg');
+  --bg-foggy-woods-xlarge: url('/images/backgrounds/foggy-woods-xlarge.jpg');
+  
+  /* WebP Versions for Better Compression */
+  --bg-foggy-woods-small-webp: url('/images/backgrounds/foggy-woods-small.webp');
+  --bg-foggy-woods-medium-webp: url('/images/backgrounds/foggy-woods-medium.webp');
+  --bg-foggy-woods-large-webp: url('/images/backgrounds/foggy-woods-large.webp');
+  --bg-foggy-woods-xlarge-webp: url('/images/backgrounds/foggy-woods-xlarge.webp');
+  
+  /* Background Loading States */
+  --bg-loading-color: #2d3e1f; /* Dark forest green for loading state */
+  --bg-fallback-color: #1a2612; /* Darker fallback color */
+  
+  /* Overlay Colors for Content Readability */
+  --overlay-light: rgba(255, 255, 255, 0.9);
+  --overlay-medium: rgba(255, 255, 255, 0.7);
+  --overlay-dark: rgba(0, 0, 0, 0.5);
+  --overlay-forest: rgba(45, 80, 22, 0.8);
+  --overlay-mist: rgba(245, 245, 240, 0.85);
+  
+  /* Gradient Overlays */
+  --overlay-gradient-top: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 50%);
+  --overlay-gradient-bottom: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 50%);
+  --overlay-gradient-center: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.3) 70%);
+}
+
+/* Base Background Class - Requirement 6.1 */
+.bg-foggy-woods {
+  background-color: #2d3e1f; /* Dark forest green for loading state */
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Loading State - Requirement 6.5 */
+.bg-foggy-woods.loading {
+  background-color: #2d3e1f; /* Dark forest green for loading state */
+  opacity: 0.8;
+}
+
+.bg-foggy-woods.loaded {
+  opacity: 1;
+}
+
+/* Responsive Background Images - Requirement 6.3 */
+
+/* Mobile - Small screens (320px to 767px) */
+@media (max-width: 767px) {
+  .bg-foggy-woods {
+    background-image: url('/images/backgrounds/foggy-woods-small.jpg');
+  }
+  
+  /* WebP support for modern browsers */
+  @supports (background-image: url('data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=')) {
+    .bg-foggy-woods {
+      background-image: url('/images/backgrounds/foggy-woods-small.webp');
+    }
+  }
+}
+
+/* Tablet - Medium screens (768px to 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .bg-foggy-woods {
+    background-image: url('/images/backgrounds/foggy-woods-medium.jpg');
+  }
+  
+  @supports (background-image: url('data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=')) {
+    .bg-foggy-woods {
+      background-image: url('/images/backgrounds/foggy-woods-medium.webp');
+    }
+  }
+}
+
+/* Desktop - Large screens (1024px to 1439px) */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .bg-foggy-woods {
+    background-image: url('/images/backgrounds/foggy-woods-large.jpg');
+  }
+  
+  @supports (background-image: url('data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=')) {
+    .bg-foggy-woods {
+      background-image: url('/images/backgrounds/foggy-woods-large.webp');
+    }
+  }
+}
+
+/* Large Desktop - Extra large screens (1440px+) */
+@media (min-width: 1440px) {
+  .bg-foggy-woods {
+    background-image: url('/images/backgrounds/foggy-woods-xlarge.jpg');
+  }
+  
+  @supports (background-image: url('data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=')) {
+    .bg-foggy-woods {
+      background-image: url('/images/backgrounds/foggy-woods-xlarge.webp');
+    }
+  }
+}
+
+/* High DPI Display Support */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .bg-foggy-woods {
+    /* Use larger images for high DPI displays */
+    background-image: url('/images/backgrounds/foggy-woods-large.jpg');
+  }
+  
+  @supports (background-image: url('data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=')) {
+    .bg-foggy-woods {
+      background-image: url('/images/backgrounds/foggy-woods-large.webp');
+    }
+  }
+}
+
+/* Overlay Utility Classes - Requirement 6.2 */
+
+/* Basic Overlays */
+.overlay-light {
+  position: relative;
+}
+
+.overlay-light::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--overlay-light);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.overlay-medium {
+  position: relative;
+}
+
+.overlay-medium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--overlay-medium);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.overlay-dark {
+  position: relative;
+}
+
+.overlay-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--overlay-dark);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.overlay-forest {
+  position: relative;
+}
+
+.overlay-forest::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--overlay-forest);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.overlay-mist {
+  position: relative;
+}
+
+.overlay-mist::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--overlay-mist);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Gradient Overlays */
+.overlay-gradient-top {
+  position: relative;
+}
+
+.overlay-gradient-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--overlay-gradient-top);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.overlay-gradient-bottom {
+  position: relative;
+}
+
+.overlay-gradient-bottom::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--overlay-gradient-bottom);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.overlay-gradient-center {
+  position: relative;
+}
+
+.overlay-gradient-center::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--overlay-gradient-center);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Content Positioning Over Overlays */
+.overlay-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Transparency Utility Classes */
+.transparent-10 { opacity: 0.1; }
+.transparent-20 { opacity: 0.2; }
+.transparent-30 { opacity: 0.3; }
+.transparent-40 { opacity: 0.4; }
+.transparent-50 { opacity: 0.5; }
+.transparent-60 { opacity: 0.6; }
+.transparent-70 { opacity: 0.7; }
+.transparent-80 { opacity: 0.8; }
+.transparent-90 { opacity: 0.9; }
+
+/* Background Attachment Utilities */
+.bg-fixed { background-attachment: fixed; }
+.bg-scroll { background-attachment: scroll; }
+.bg-local { background-attachment: local; }
+
+/* Background Size Utilities */
+.bg-cover { background-size: cover; }
+.bg-contain { background-size: contain; }
+.bg-auto { background-size: auto; }
+
+/* Background Position Utilities */
+.bg-center { background-position: center; }
+.bg-top { background-position: top; }
+.bg-bottom { background-position: bottom; }
+.bg-left { background-position: left; }
+.bg-right { background-position: right; }
+
+/* Performance Optimizations */
+.bg-optimized {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .bg-foggy-woods {
+    transition: none;
+    background-attachment: scroll;
+  }
+  
+  .overlay-light::before,
+  .overlay-medium::before,
+  .overlay-dark::before,
+  .overlay-forest::before,
+  .overlay-mist::before,
+  .overlay-gradient-top::before,
+  .overlay-gradient-bottom::before,
+  .overlay-gradient-center::before {
+    transition: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .bg-foggy-woods {
+    background: none !important;
+    background-color: white !important;
+  }
+  
+  .overlay-light::before,
+  .overlay-medium::before,
+  .overlay-dark::before,
+  .overlay-forest::before,
+  .overlay-mist::before,
+  .overlay-gradient-top::before,
+  .overlay-gradient-bottom::before,
+  .overlay-gradient-center::before {
+    display: none !important;
+  }
+}

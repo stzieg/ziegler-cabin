@@ -1,0 +1,232 @@
+/* Theme System - CSS Custom Properties */
+
+:root {
+  /* Primary Colors (Woods/Tree Theme) */
+  --color-forest-green: #2d5016;
+  --color-deep-brown: #3e2723;
+  --color-sage-green: #8bc34a;
+  --color-bark-brown: #5d4037;
+
+  /* Neutral Colors */
+  --color-off-white: #f5f5f0;
+  --color-light-gray: #e0e0d8;
+  --color-medium-gray: #9e9e94;
+  --color-charcoal: #424242;
+
+  /* Feedback Colors */
+  --color-error-red: #c62828;
+  --color-success-green: #558b2f;
+  --color-warning-amber: #f57c00;
+
+  /* Typography */
+  --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
+  --font-family-logo: 'Pacifico', cursive;
+
+  /* Font Sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-h1: 32px;
+  --font-size-h2: 24px;
+  --font-size-h3: 20px;
+  --font-size-logo-desktop: 72px;
+  --font-size-logo-mobile: 48px;
+
+  /* Line Heights */
+  --line-height-base: 1.5;
+  --line-height-heading: 1.2;
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Spacing System (8px base unit) */
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-6: 48px;
+  --spacing-8: 64px;
+
+  /* Component Specific */
+  --border-radius-sm: 4px;
+  --border-radius-base: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-width-base: 2px;
+
+  /* Input Fields */
+  --input-padding-vertical: 12px;
+  --input-padding-horizontal: 16px;
+  --input-border-color: var(--color-light-gray);
+  --input-border-color-focus: var(--color-forest-green);
+  --input-border-color-error: var(--color-error-red);
+  --input-border-color-valid: var(--color-success-green);
+
+  /* Buttons */
+  --button-padding-vertical: 12px;
+  --button-padding-horizontal: 24px;
+  --button-bg-primary: var(--color-forest-green);
+  --button-bg-primary-hover: #234010;
+  --button-text-primary: white;
+  --button-bg-disabled: var(--color-medium-gray);
+
+  /* Layout */
+  --layout-max-width: 1200px;
+  --form-max-width: 720px;
+  --content-padding-mobile: 24px;
+  --content-padding-desktop: 48px;
+
+  /* Touch Targets - WCAG 2.1 AA Requirement (44x44px minimum) */
+  --touch-target-min: 44px;
+
+  /* Shadows */
+  --shadow-focus: 0 0 0 3px rgba(45, 80, 22, 0.2);
+  --shadow-subtle: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Background System - Foggy Woods Theme */
+  --current-background-image: none;
+  --bg-loading-color: #2d3e1f;
+  --bg-fallback-color: #1a2612;
+  
+  /* Overlay System for Content Readability */
+  --overlay-light: rgba(255, 255, 255, 0.1);
+  --overlay-medium: rgba(255, 255, 255, 0.05);
+  --overlay-dark: rgba(0, 0, 0, 0.5);
+  --overlay-forest: rgba(45, 80, 22, 0.8);
+  --overlay-mist: rgba(245, 245, 240, 0.1);
+  
+  /* Content Cards with Background Compatibility */
+  --card-bg-over-image: rgba(255, 255, 255, 0.1);
+  --card-border-over-image: rgba(45, 80, 22, 0.3);
+  --card-shadow-over-image: 0 4px 12px rgba(0, 0, 0, 0.25);
+  
+  /* Modal backgrounds - solid for readability */
+  --modal-bg: white;
+}
+
+/* Enhanced Responsive Design System - Requirements 2.1, 2.2, 2.3, 2.4 */
+
+/* Mobile viewport - 320px to 767px - Requirement 2.1, 2.3 */
+@media (max-width: 767px) {
+  :root {
+    /* Typography scaling for mobile readability */
+    --font-size-base: 15px;
+    --font-size-h1: 26px;
+    --font-size-h2: 20px;
+    --font-size-h3: 17px;
+    
+    /* Enhanced touch targets for mobile - Requirement 2.3 */
+    --touch-target-min: 48px;
+    --button-padding-vertical: 14px;
+    --button-padding-horizontal: 20px;
+    --input-padding-vertical: 14px;
+    --input-padding-horizontal: 16px;
+    
+    /* Optimized spacing for mobile screens */
+    --spacing-1: 6px;
+    --spacing-2: 12px;
+    --spacing-3: 18px;
+    --spacing-4: 24px;
+    --spacing-6: 36px;
+    --spacing-8: 48px;
+    --content-padding-mobile: 16px;
+    
+    /* Mobile-specific layout adjustments */
+    --border-radius-base: 6px;
+    --form-max-width: 100%;
+  }
+}
+
+/* Small mobile viewport - 320px to 479px - Enhanced mobile support */
+@media (max-width: 479px) {
+  :root {
+    --font-size-base: 14px;
+    --font-size-h1: 24px;
+    --font-size-h2: 18px;
+    --font-size-h3: 16px;
+    --content-padding-mobile: 12px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 16px;
+    --spacing-4: 20px;
+  }
+}
+
+/* Tablet viewport - 768px to 1023px - Requirement 2.2 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    /* Balanced typography for tablet */
+    --font-size-base: 16px;
+    --font-size-h1: 30px;
+    --font-size-h2: 23px;
+    --font-size-h3: 19px;
+    
+    /* Touch-friendly targets for tablet */
+    --touch-target-min: 46px;
+    --button-padding-vertical: 13px;
+    --button-padding-horizontal: 24px;
+    --input-padding-vertical: 13px;
+    --input-padding-horizontal: 16px;
+    
+    /* Tablet spacing optimization */
+    --spacing-1: 7px;
+    --spacing-2: 14px;
+    --spacing-3: 21px;
+    --spacing-4: 28px;
+    --spacing-6: 42px;
+    --spacing-8: 56px;
+    
+    /* Tablet layout adjustments */
+    --border-radius-base: 7px;
+    --form-max-width: 600px;
+  }
+}
+
+/* Desktop viewport - 1024px+ - Requirement 2.1 */
+@media (min-width: 1024px) {
+  :root {
+    /* Full desktop typography */
+    --font-size-base: 16px;
+    --font-size-h1: 32px;
+    --font-size-h2: 24px;
+    --font-size-h3: 20px;
+    
+    /* Standard desktop touch targets */
+    --touch-target-min: 44px;
+    --button-padding-vertical: 12px;
+    --button-padding-horizontal: 24px;
+    --input-padding-vertical: 12px;
+    --input-padding-horizontal: 16px;
+    
+    /* Desktop spacing system */
+    --spacing-1: 8px;
+    --spacing-2: 16px;
+    --spacing-3: 24px;
+    --spacing-4: 32px;
+    --spacing-6: 48px;
+    --spacing-8: 64px;
+    
+    /* Desktop layout optimization */
+    --border-radius-base: 8px;
+    --form-max-width: 720px;
+  }
+}
+
+/* Large desktop viewport - 1440px+ - Enhanced desktop experience */
+@media (min-width: 1440px) {
+  :root {
+    --font-size-h1: 36px;
+    --font-size-h2: 28px;
+    --font-size-h3: 22px;
+    --spacing-6: 56px;
+    --spacing-8: 72px;
+    --content-padding-desktop: 56px;
+  }
+}

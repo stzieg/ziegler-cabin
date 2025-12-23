@@ -1,0 +1,227 @@
+/* Content Overlay Utilities for Background Images */
+/* Requirements: 6.2, 6.4 - Ensure content readability over background */
+
+/* Card Components Over Background */
+.card-over-background {
+  background-color: var(--card-bg-over-image);
+  border: 1px solid var(--card-border-over-image);
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--card-shadow-over-image);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 2;
+}
+
+/* Text Content Over Background */
+.text-over-background {
+  color: var(--color-deep-brown);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  position: relative;
+  z-index: 2;
+}
+
+.text-over-background-light {
+  color: var(--color-off-white);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  position: relative;
+  z-index: 2;
+}
+
+/* Interactive Elements Over Background */
+.button-over-background {
+  background-color: var(--button-bg-primary);
+  color: var(--button-text-primary);
+  border: 2px solid transparent;
+  box-shadow: var(--card-shadow-over-image);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  position: relative;
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+
+.button-over-background:hover:not(:disabled) {
+  background-color: var(--button-bg-primary-hover);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.button-over-background:focus {
+  outline: none;
+  border-color: var(--color-sage-green);
+  box-shadow: var(--shadow-focus), var(--card-shadow-over-image);
+}
+
+/* Input Fields Over Background */
+.input-over-background {
+  background-color: var(--card-bg-over-image);
+  border: 2px solid var(--input-border-color);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  position: relative;
+  z-index: 2;
+}
+
+.input-over-background:focus {
+  background-color: rgba(255, 255, 255, 0.98);
+  border-color: var(--input-border-color-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+/* Navigation Elements Over Background */
+.nav-over-background {
+  background-color: var(--overlay-mist);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--card-border-over-image);
+  position: relative;
+  z-index: 10;
+}
+
+/* Modal/Dialog Over Background */
+.modal-over-background {
+  background-color: white;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border-over-image);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 100;
+}
+
+/* Content Sections with Different Overlay Intensities */
+.content-section-light {
+  background-color: var(--overlay-light);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  position: relative;
+  z-index: 2;
+}
+
+.content-section-medium {
+  background-color: var(--overlay-medium);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 2;
+}
+
+.content-section-mist {
+  background-color: var(--overlay-mist);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 2;
+}
+
+/* Accessibility Enhancements */
+.high-contrast-over-background {
+  background-color: rgba(255, 255, 255, 0.98);
+  color: var(--color-charcoal);
+  border: 2px solid var(--color-deep-brown);
+  position: relative;
+  z-index: 2;
+}
+
+/* Focus Indicators Over Background */
+.focus-visible-over-background:focus-visible {
+  outline: 3px solid var(--color-sage-green);
+  outline-offset: 2px;
+  background-color: rgba(255, 255, 255, 0.98);
+}
+
+/* Loading States Over Background */
+.loading-over-background {
+  background-color: var(--overlay-medium);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  position: relative;
+  z-index: 2;
+}
+
+.loading-over-background::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--color-forest-green);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error States Over Background */
+.error-over-background {
+  background-color: rgba(198, 40, 40, 0.1);
+  border: 2px solid var(--color-error-red);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  position: relative;
+  z-index: 2;
+}
+
+/* Success States Over Background */
+.success-over-background {
+  background-color: rgba(85, 139, 47, 0.1);
+  border: 2px solid var(--color-success-green);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  position: relative;
+  z-index: 2;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 767px) {
+  .card-over-background,
+  .modal-over-background {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  
+  .nav-over-background {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .button-over-background:hover:not(:disabled) {
+    transform: none;
+  }
+  
+  .loading-over-background::after {
+    animation: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .card-over-background,
+  .content-section-light,
+  .content-section-medium,
+  .content-section-mist,
+  .modal-over-background {
+    background-color: white !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+  
+  .text-over-background,
+  .text-over-background-light {
+    color: black !important;
+    text-shadow: none !important;
+  }
+}

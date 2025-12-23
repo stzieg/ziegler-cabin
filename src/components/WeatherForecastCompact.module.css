@@ -1,0 +1,97 @@
+/* WeatherForecastCompact Component Styles */
+
+.container {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: var(--spacing-4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  margin: 0 0 var(--spacing-3) 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-forest-green);
+}
+
+.loading {
+  color: var(--color-sage-green);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: var(--spacing-4);
+}
+
+.forecastList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.forecastItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2) 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.forecastItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.date {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-deep-brown);
+  min-width: 90px;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+}
+
+.temps {
+  display: flex;
+  gap: var(--spacing-2);
+  font-size: 0.875rem;
+  min-width: 70px;
+  justify-content: flex-end;
+}
+
+.high {
+  font-weight: 600;
+  color: var(--color-deep-brown);
+}
+
+.low {
+  color: var(--color-sage-green);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-3);
+  }
+
+  .title {
+    font-size: 0.9375rem;
+  }
+
+  .date {
+    font-size: 0.8125rem;
+    min-width: 80px;
+  }
+
+  .icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .temps {
+    font-size: 0.8125rem;
+    min-width: 60px;
+  }
+}

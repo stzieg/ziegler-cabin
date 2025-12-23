@@ -1,0 +1,59 @@
+/* WeatherTab Component Styles */
+
+.weatherTab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--spacing-3);
+  padding-top: var(--spacing-2);
+  overflow-y: auto;
+}
+
+.header {
+  margin-bottom: var(--spacing-3);
+  background: rgba(255, 255, 255, 0.7);
+  padding: var(--spacing-3);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.header h1 {
+  margin: 0 0 var(--spacing-1) 0;
+  color: var(--color-forest-green);
+  font-size: 1.75rem;
+  font-weight: 500;
+}
+
+.header p {
+  margin: 0;
+  color: #4a6741;
+  font-size: 1rem;
+}
+
+.weatherContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .weatherTab {
+    padding: var(--spacing-2);
+  }
+  
+  .header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .header p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .weatherTab {
+    padding: var(--spacing-4);
+    padding-top: var(--spacing-2);
+  }
+}

@@ -1,0 +1,128 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #2D5016;
+  filter: drop-shadow(0 2px 4px rgba(45, 80, 22, 0.1));
+  transition: transform 0.2s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.logoSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Size variants */
+.small {
+  width: 40px;
+  height: 40px;
+}
+
+.medium {
+  width: 72px;
+  height: 72px;
+}
+
+.large {
+  width: 120px;
+  height: 120px;
+}
+
+/* Responsive sizing - Requirements 4.1, 4.2, 4.3, 4.4 */
+
+/* Mobile styles - 375px viewport - Requirement 4.1 */
+@media (max-width: 767px) {
+  .large {
+    width: 72px;
+    height: 72px;
+  }
+
+  .medium {
+    width: 52px;
+    height: 52px;
+  }
+
+  .small {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Tablet styles - 768px viewport - Requirement 4.2 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .large {
+    width: 96px;
+    height: 96px;
+  }
+
+  .medium {
+    width: 64px;
+    height: 64px;
+  }
+
+  .small {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Desktop styles - 1024px+ viewport - Requirement 4.3 */
+@media (min-width: 1024px) {
+  .large {
+    width: 120px;
+    height: 120px;
+  }
+
+  .medium {
+    width: 72px;
+    height: 72px;
+  }
+
+  .small {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Smooth transitions - Requirement 4.4 */
+.logo {
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.logoSvg {
+  transition: transform 0.2s ease-in-out;
+}
+
+.logoSvg path {
+  transition: stroke-dasharray 0.3s ease, stroke-dashoffset 0.3s ease;
+}
+
+/* Hover effect (desktop only) */
+@media (hover: hover) and (pointer: fine) {
+  .logo:hover .logoSvg {
+    transform: scale(1.05);
+  }
+  
+  .logo:hover .logoSvg path {
+    filter: drop-shadow(0 0 8px rgba(45, 80, 22, 0.3));
+  }
+}
+
+/* Touch interaction support - Requirement 4.5 */
+@media (hover: none) and (pointer: coarse) {
+  .logo:active .logoSvg {
+    transform: scale(0.95);
+  }
+}

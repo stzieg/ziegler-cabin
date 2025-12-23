@@ -1,0 +1,208 @@
+/* DashboardHeader Component Styles */
+/* Requirements: 2.1, 2.2 - Hamburger menu and fixed positioning */
+
+.dashboardHeader {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* Hamburger Menu Button - Requirements: 2.1, 2.2 */
+.hamburgerButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--color-forest-green);
+}
+
+.hamburgerButton:hover {
+  background-color: rgba(45, 80, 22, 0.1);
+  color: var(--color-forest-green);
+}
+
+.hamburgerButton:focus-visible {
+  outline: 2px solid var(--color-forest-green);
+  outline-offset: 2px;
+}
+
+.hamburgerButton:active {
+  transform: scale(0.95);
+}
+
+.hamburgerIcon {
+  width: 24px;
+  height: 24px;
+  color: currentColor;
+  transition: all 0.2s ease;
+}
+
+/* Remove the old hamburger line styles since we're using SVG now */
+
+/* Logo Container */
+.logoContainer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-forest-green);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s ease;
+}
+
+.logoContainer:hover {
+  opacity: 0.8;
+}
+
+.logoContainer:focus-visible {
+  outline: 2px solid var(--color-forest-green);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Right Section */
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Back Button */
+.backButton {
+  padding: var(--spacing-2) var(--spacing-3);
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--color-deep-brown);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.backButton:hover {
+  background-color: rgba(45, 80, 22, 0.06);
+  border-color: var(--color-forest-green);
+  color: var(--color-forest-green);
+}
+
+.backButton:focus-visible {
+  outline: 2px solid var(--color-forest-green);
+  outline-offset: 2px;
+}
+
+.backButton:active {
+  transform: scale(0.98);
+}
+
+/* Mobile Responsive Design - Requirements: 4.1 */
+@media (max-width: 768px) {
+  .dashboardHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+
+  .hamburgerButton {
+    width: 48px;
+    height: 48px;
+  }
+
+  .hamburgerIcon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .logoContainer {
+    /* Logo scales appropriately on mobile */
+  }
+
+  .backButton {
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: 13px;
+  }
+}
+
+/* Tablet Responsive Design */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .dashboardHeader {
+    padding: var(--spacing-3);
+  }
+
+  .logoContainer {
+    /* Logo scales appropriately on tablet */
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .hamburgerButton {
+    min-height: 52px;
+    min-width: 52px;
+  }
+
+  .backButton {
+    min-height: 44px;
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .hamburgerButton {
+    border: 1px solid transparent;
+  }
+
+  .hamburgerButton:focus-visible {
+    border-color: currentColor;
+    outline: 2px solid currentColor;
+  }
+
+  .backButton {
+    border-color: currentColor;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .hamburgerButton,
+  .hamburgerIcon,
+  .backButton {
+    transition: none;
+  }
+
+  .hamburgerButton:active,
+  .backButton:active {
+    transform: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .dashboardHeader {
+    display: none;
+  }
+}

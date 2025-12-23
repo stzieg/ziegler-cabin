@@ -1,0 +1,193 @@
+/* ErrorDisplay component styles */
+.errorDisplay {
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 2px solid;
+  background-color: var(--color-background);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.errorDisplay.error {
+  border-color: var(--color-error);
+  background-color: #fef2f2;
+  color: var(--color-error);
+}
+
+.errorDisplay.warning {
+  border-color: var(--color-warning);
+  background-color: #fffbeb;
+  color: var(--color-warning);
+}
+
+.errorDisplay.info {
+  border-color: var(--color-primary);
+  background-color: #f0f9ff;
+  color: var(--color-primary);
+}
+
+.errorContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.errorHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.errorIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.errorMessage {
+  flex: 1;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.errorDetails {
+  margin-top: 8px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.errorSummary {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 500;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.errorSummary:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.errorDetailsContent {
+  padding: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.errorDetailsContent p {
+  margin: 4px 0;
+}
+
+.errorStack {
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 12px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.errorActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.errorButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryButton {
+  background-color: currentColor;
+  color: white;
+}
+
+.retryButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.dismissButton {
+  background-color: transparent;
+  color: currentColor;
+  border: 1px solid currentColor;
+}
+
+.dismissButton:hover {
+  background-color: currentColor;
+  color: white;
+}
+
+.errorButton:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.errorButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .errorDisplay {
+    margin: 12px 0;
+    padding: 12px;
+  }
+  
+  .errorActions {
+    flex-direction: column;
+  }
+  
+  .errorButton {
+    width: 100%;
+  }
+}
+
+/* Animation for error appearance */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.errorDisplay {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .errorDisplay {
+    border-width: 3px;
+  }
+  
+  .errorButton {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .errorDisplay {
+    animation: none;
+  }
+  
+  .errorButton {
+    transition: none;
+  }
+}
