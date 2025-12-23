@@ -365,7 +365,7 @@ export const FullScreenDashboard: React.FC<FullScreenDashboardProps> = ({
       {/* Header with hamburger menu */}
       <DashboardHeader
         onMenuToggle={handleMenuToggle}
-        sidebarExpanded={sidebarVisible || sidebarExpanded}
+        sidebarExpanded={sidebarVisible}
         activeTab={activeTab}
         onTabChange={handleTabChange}
         onLogout={handleLogout}
