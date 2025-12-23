@@ -143,6 +143,7 @@ export const FullScreenDashboard: React.FC<FullScreenDashboardProps> = ({
     savedPreferences.sidebarExpanded !== undefined ? savedPreferences.sidebarExpanded : true
   );
   const [sidebarVisible, setSidebarVisible] = useState(false); // for mobile overlay
+  const [isMobile, setIsMobile] = useState(false); // track if we're on mobile
   const [formStates, setFormStates] = useState<Record<TabType, any>>({
     home: {},
     calendar: {},
@@ -309,7 +310,10 @@ export const FullScreenDashboard: React.FC<FullScreenDashboardProps> = ({
    */
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 768) {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      
+      if (mobile) {
         // Mobile: ensure sidebar is hidden by default
         setSidebarVisible(false);
         // On mobile, we collapse the sidebar but don't override saved preferences
@@ -365,7 +369,7 @@ export const FullScreenDashboard: React.FC<FullScreenDashboardProps> = ({
       {/* Header with hamburger menu */}
       <DashboardHeader
         onMenuToggle={handleMenuToggle}
-        sidebarExpanded={sidebarVisible}
+        sidebarExpanded={isMobile ? sidebarVisible : sidebarExpanded}
         activeTab={activeTab}
         onTabChange={handleTabChange}
         onLogout={handleLogout}
