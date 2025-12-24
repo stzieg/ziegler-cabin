@@ -57,9 +57,6 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
   const [error, setError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(true);
   const [lastError, setLastError] = useState<AppError | null>(null);
-  
-  // Use a ref to track signing out state - accessible in callbacks without stale closure issues
-  const isSigningOutRef = React.useRef<boolean>(false);
 
   // Initialize authentication state and set up session listener
   useEffect(() => {
@@ -91,12 +88,6 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
     // Function to handle session restoration and updates
     const handleSession = async (session: Session | null) => {
       if (!mounted) return;
-      
-      // If we're in the process of signing out, ignore any session updates
-      if (isSigningOutRef.current) {
-        console.log('Ignoring session update during sign out');
-        return;
-      }
 
       setSession(session);
       setUser(session?.user ?? null);
@@ -300,50 +291,20 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
     }
   };
 
-  // Sign out method with enhanced error handling
+  // Sign out method - simple and reliable
   const signOut = async (): Promise<void> => {
     try {
-      // Set the ref to prevent session restoration during sign out
-      isSigningOutRef.current = true;
-      
-      setLoading(true);
-      setError(null);
-      setLastError(null);
-      
-      // Clear local state immediately before calling Supabase
-      setUser(null);
-      setProfile(null);
-      setSession(null);
-      
-      const { error: signOutError } = await supabase.auth.signOut({ scope: 'global' });
-      
-      if (signOutError) {
-        throw signOutError;
-      }
-      
-      // Clear any cached dashboard preferences that might cause issues
+      // Clear any cached preferences
       localStorage.removeItem('dashboardPreferences');
       
-      setIsConnected(true); // Reset connection status
-      setLoading(false);
-      
-      // Reset the ref after a short delay to allow any pending auth events to be ignored
-      setTimeout(() => {
-        isSigningOutRef.current = false;
-      }, 1000);
-    } catch (error: any) {
-      const appError = processError(error, 'signOut');
-      logError(appError, 'signOut');
-      setLastError(appError);
-      setError(appError.userMessage);
-      
-      // Even if sign out fails, ensure local state is cleared
-      setUser(null);
-      setProfile(null);
-      setSession(null);
-      
-      // Force reload as fallback to ensure clean state
-      window.location.reload();
+      // Sign out from Supabase
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      // Always reload the page to ensure clean state
+      // This is the most reliable way to handle logout on all devices
+      window.location.href = window.location.origin;
     }
   };
 
