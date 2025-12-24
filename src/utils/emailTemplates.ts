@@ -44,10 +44,11 @@ export const generateInvitationEmailHTML = (data: EmailTemplateData): string => 
             margin-bottom: 30px;
         }
         .logo {
-            font-family: 'Pacifico', cursive;
-            font-size: 48px;
-            color: #2D5016;
             margin-bottom: 10px;
+        }
+        .logo img {
+            width: 80px;
+            height: auto;
         }
         .title {
             color: #2D5016;
@@ -100,14 +101,16 @@ export const generateInvitationEmailHTML = (data: EmailTemplateData): string => 
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">Z</div>
+            <div class="logo">
+                <img src="https://zieglercabin.com/images/cursive-z-logo.jpg" alt="Ziegler Cabin" width="80" />
+            </div>
             <h1 class="title">You're Invited!</h1>
         </div>
         
         <div class="content">
             <p>Hello,</p>
             
-            <p>You've been invited by ${senderName} to join our family cabin management system. This platform helps us coordinate cabin visits, manage bookings, and stay connected as a family.</p>
+            <p>You've been invited to join the Ziegler family cabin management system. This platform helps us coordinate visits, keep track of things that need to be done, and stay connected as a family.</p>
             
             <p>To get started, click the button below to create your account:</p>
             
