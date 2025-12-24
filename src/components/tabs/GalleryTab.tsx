@@ -84,7 +84,6 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filterAlbum, setFilterAlbum] = useState<string>('');
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -544,15 +543,6 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
           >
             Upload Photos
           </button>
-          
-          <select
-            value={viewMode}
-            onChange={(e) => setViewMode(e.target.value as 'grid' | 'list')}
-            className={styles.viewSelect}
-          >
-            <option value="grid">Grid View</option>
-            <option value="list">List View</option>
-          </select>
 
           {albums.length > 0 && (
             <select
@@ -652,7 +642,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
 
       {/* Photo Grid */}
       <div 
-        className={`${styles.photoGrid} ${viewMode === 'list' ? styles.listView : ''}`}
+        className={styles.photoGrid}
         data-testid="photo-grid"
       >
         {filteredPhotos.length === 0 ? (
