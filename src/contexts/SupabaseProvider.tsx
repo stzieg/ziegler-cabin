@@ -57,6 +57,9 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
   const [error, setError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(true);
   const [lastError, setLastError] = useState<AppError | null>(null);
+  
+  // Use a ref to track signing out state - accessible in callbacks without stale closure issues
+  const isSigningOutRef = React.useRef<boolean>(false);
 
   // Initialize authentication state and set up session listener
   useEffect(() => {
@@ -88,6 +91,12 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
     // Function to handle session restoration and updates
     const handleSession = async (session: Session | null) => {
       if (!mounted) return;
+      
+      // If we're in the process of signing out, ignore any session updates
+      if (isSigningOutRef.current) {
+        console.log('Ignoring session update during sign out');
+        return;
+      }
 
       setSession(session);
       setUser(session?.user ?? null);
@@ -294,6 +303,9 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
   // Sign out method with enhanced error handling
   const signOut = async (): Promise<void> => {
     try {
+      // Set the ref to prevent session restoration during sign out
+      isSigningOutRef.current = true;
+      
       setLoading(true);
       setError(null);
       setLastError(null);
@@ -313,6 +325,12 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
       localStorage.removeItem('dashboardPreferences');
       
       setIsConnected(true); // Reset connection status
+      setLoading(false);
+      
+      // Reset the ref after a short delay to allow any pending auth events to be ignored
+      setTimeout(() => {
+        isSigningOutRef.current = false;
+      }, 1000);
     } catch (error: any) {
       const appError = processError(error, 'signOut');
       logError(appError, 'signOut');
@@ -326,8 +344,6 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
       
       // Force reload as fallback to ensure clean state
       window.location.reload();
-    } finally {
-      setLoading(false);
     }
   };
 
