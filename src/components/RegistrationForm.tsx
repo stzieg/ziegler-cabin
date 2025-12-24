@@ -237,29 +237,28 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         state.formData.invitationToken
       );
 
-      // Clear form on successful submission
-      setState(prev => ({
-        ...prev,
-        formData: {
-          firstName: '',
-          lastName: '',
-          email: '',
-          phoneNumber: '',
-          password: '',
-          invitationToken: '',
-        },
-        errors: {},
-        touched: {},
-        isSubmitted: true,
-      }));
-
-      // If email confirmation is NOT required, call onSubmit to proceed
-      // Otherwise, show the success message and let user check email
+      // If email confirmation is NOT required, user is automatically signed in
+      // The auth state change listener will handle the redirect
+      // Just call onSubmit to signal success
       if (!result.requiresEmailConfirmation) {
         onSubmit(state.formData);
+      } else {
+        // Email confirmation required - show success message
+        setState(prev => ({
+          ...prev,
+          formData: {
+            firstName: '',
+            lastName: '',
+            email: '',
+            phoneNumber: '',
+            password: '',
+            invitationToken: '',
+          },
+          errors: {},
+          touched: {},
+          isSubmitted: true,
+        }));
       }
-      // If email confirmation IS required, the success message will show
-      // and user needs to check their email before they can log in
     } catch (error: any) {
       console.error('Registration error:', error);
       setState(prev => ({
