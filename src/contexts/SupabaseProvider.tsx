@@ -299,11 +299,22 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
       
       // Sign out from Supabase
       await supabase.auth.signOut({ scope: 'global' });
+      
+      // Explicitly clear all Supabase auth data from localStorage
+      // Supabase stores session data with keys starting with 'sb-'
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.startsWith('sb-') || key.includes('supabase'))) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
     } catch (error) {
       console.error('Sign out error:', error);
     } finally {
       // Always reload the page to ensure clean state
-      // This is the most reliable way to handle logout on all devices
       window.location.href = window.location.origin;
     }
   };
