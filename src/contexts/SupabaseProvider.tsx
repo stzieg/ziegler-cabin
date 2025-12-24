@@ -298,16 +298,20 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
       setError(null);
       setLastError(null);
       
-      const { error: signOutError } = await supabase.auth.signOut();
+      // Clear local state immediately before calling Supabase
+      setUser(null);
+      setProfile(null);
+      setSession(null);
+      
+      const { error: signOutError } = await supabase.auth.signOut({ scope: 'global' });
       
       if (signOutError) {
         throw signOutError;
       }
       
-      // Clear local state immediately
-      setUser(null);
-      setProfile(null);
-      setSession(null);
+      // Clear any cached dashboard preferences that might cause issues
+      localStorage.removeItem('dashboardPreferences');
+      
       setIsConnected(true); // Reset connection status
     } catch (error: any) {
       const appError = processError(error, 'signOut');
@@ -315,12 +319,13 @@ export const SupabaseProvider: React.FC<SupabaseProviderProps> = ({ children }) 
       setLastError(appError);
       setError(appError.userMessage);
       
-      // Even if sign out fails, clear local state
+      // Even if sign out fails, ensure local state is cleared
       setUser(null);
       setProfile(null);
       setSession(null);
       
-      throw appError;
+      // Force reload as fallback to ensure clean state
+      window.location.reload();
     } finally {
       setLoading(false);
     }
