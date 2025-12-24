@@ -99,6 +99,30 @@ export interface Notification {
   related_maintenance_id?: string; // Optional reference to maintenance task
 }
 
+export type SwapRequestStatus = 'pending' | 'accepted' | 'declined' | 'cancelled';
+
+export interface ReservationSwapRequest {
+  id: string;                      // UUID primary key
+  requester_id: string;            // User requesting the swap
+  requester_reservation_id: string; // Reservation being offered
+  target_user_id: string;          // User being asked to swap
+  target_reservation_id: string;   // Reservation being requested
+  status: SwapRequestStatus;       // Current status
+  message?: string;                // Optional message from requester
+  token: string;                   // Unique token for email links
+  created_at: string;              // Creation timestamp
+  updated_at: string;              // Last update timestamp
+  responded_at?: string;           // When the target user responded
+  expires_at: string;              // When the request expires
+  // Joined data
+  requester_profile?: {
+    first_name: string;
+    last_name: string;
+  };
+  requester_reservation?: Reservation;
+  target_reservation?: Reservation;
+}
+
 // Form data types
 export interface RegistrationData {
   email: string;          // User's email (required, valid email format)

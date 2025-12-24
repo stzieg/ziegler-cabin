@@ -3,6 +3,7 @@ import type { User } from '@supabase/supabase-js';
 import type { Reservation } from '../types/supabase';
 import { supabase } from '../utils/supabase';
 import { weatherService, type WeatherForecast, type WeatherData } from '../utils/weatherService';
+import { SwapRequestModal } from './SwapRequestModal';
 import styles from './Calendar.module.css';
 
 interface CalendarProps {
@@ -49,6 +50,8 @@ export const Calendar: React.FC<CalendarProps> = ({
     endDate: '',
     notes: '',
   });
+  const [showSwapModal, setShowSwapModal] = useState(false);
+  const [swapTargetReservation, setSwapTargetReservation] = useState<Reservation | null>(null);
 
   /**
    * Load reservations for the current month
@@ -531,54 +534,99 @@ export const Calendar: React.FC<CalendarProps> = ({
               {editingReservation ? 'Edit Reservation' : 'New Reservation'}
             </h3>
             
-            <form onSubmit={handleReservationSubmit}>
-              <div className={styles.formGroup}>
-                <label htmlFor="startDate">Start Date:</label>
-                <input
-                  id="startDate"
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                  required
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor="endDate">End Date:</label>
-                <input
-                  id="endDate"
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-                  required
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor="notes">Notes (optional):</label>
-                <textarea
-                  id="notes"
-                  value={formData.notes}
-                  onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                  rows={3}
-                />
-              </div>
-              
-              <div className={styles.formActions}>
-                <button type="submit" className={styles.submitButton}>
-                  {editingReservation ? 'Update' : 'Create'} Reservation
+            {/* Show reservation owner info if viewing someone else's reservation */}
+            {editingReservation && editingReservation.user_id !== user.id && (
+              <div className={styles.ownerInfo}>
+                <p>
+                  This reservation belongs to{' '}
+                  <strong>
+                    {editingReservation.profiles
+                      ? `${editingReservation.profiles.first_name} ${editingReservation.profiles.last_name}`
+                      : 'another user'}
+                  </strong>
+                </p>
+                <button
+                  type="button"
+                  className={styles.swapButton}
+                  onClick={() => {
+                    setSwapTargetReservation(editingReservation);
+                    setShowSwapModal(true);
+                    setShowReservationForm(false);
+                  }}
+                >
+                  🔄 Request Swap
                 </button>
+              </div>
+            )}
+            
+            {/* Only show form if it's the user's reservation or a new one */}
+            {(!editingReservation || editingReservation.user_id === user.id) && (
+              <form onSubmit={handleReservationSubmit}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="startDate">Start Date:</label>
+                  <input
+                    id="startDate"
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                    required
+                  />
+                </div>
                 
-                {editingReservation && (
+                <div className={styles.formGroup}>
+                  <label htmlFor="endDate">End Date:</label>
+                  <input
+                    id="endDate"
+                    type="date"
+                    value={formData.endDate}
+                    onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
+                    required
+                  />
+                </div>
+                
+                <div className={styles.formGroup}>
+                  <label htmlFor="notes">Notes (optional):</label>
+                  <textarea
+                    id="notes"
+                    value={formData.notes}
+                    onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                    rows={3}
+                  />
+                </div>
+                
+                <div className={styles.formActions}>
+                  <button type="submit" className={styles.submitButton}>
+                    {editingReservation ? 'Update' : 'Create'} Reservation
+                  </button>
+                  
+                  {editingReservation && (
+                    <button
+                      type="button"
+                      className={styles.deleteButton}
+                      onClick={handleReservationDelete}
+                    >
+                      Delete Reservation
+                    </button>
+                  )}
+                  
                   <button
                     type="button"
-                    className={styles.deleteButton}
-                    onClick={handleReservationDelete}
+                    className={styles.cancelButton}
+                    onClick={() => {
+                      setShowReservationForm(false);
+                      setSelectedDate(null);
+                      setEditingReservation(null);
+                    }}
                   >
-                    Delete Reservation
+                    Cancel
                   </button>
-                )}
-                
+                </div>
+              </form>
+            )}
+            
+            {/* Close button for viewing other's reservations */}
+            {editingReservation && editingReservation.user_id !== user.id && (
+              <div className={styles.formActions}>
                 <button
                   type="button"
                   className={styles.cancelButton}
@@ -588,12 +636,29 @@ export const Calendar: React.FC<CalendarProps> = ({
                     setEditingReservation(null);
                   }}
                 >
-                  Cancel
+                  Close
                 </button>
               </div>
-            </form>
+            )}
           </div>
         </div>
+      )}
+
+      {/* Swap Request Modal */}
+      {showSwapModal && swapTargetReservation && (
+        <SwapRequestModal
+          targetReservation={swapTargetReservation}
+          currentUser={user}
+          onClose={() => {
+            setShowSwapModal(false);
+            setSwapTargetReservation(null);
+          }}
+          onSuccess={() => {
+            setShowSwapModal(false);
+            setSwapTargetReservation(null);
+            loadReservations();
+          }}
+        />
       )}
     </div>
   );

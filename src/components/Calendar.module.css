@@ -365,6 +365,40 @@
   background: #f0f0f0;
 }
 
+/* Owner info and swap button styles */
+.ownerInfo {
+  background: #f8f9fa;
+  border: 1px solid #e0e0d8;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.ownerInfo p {
+  margin: 0 0 0.75rem 0;
+  color: #666;
+}
+
+.swapButton {
+  background: var(--color-forest-green, #2d5016);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.swapButton:hover {
+  background: #1a3a0a;
+}
+
 /* Mobile Responsive Design */
 @media (max-width: 768px) {
   .calendar {

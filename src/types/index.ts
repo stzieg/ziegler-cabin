@@ -13,4 +13,6 @@ export type {
   Notification,
   NotificationType,
   PriorityLevel,
+  ReservationSwapRequest,
+  SwapRequestStatus,
 } from './supabase';
