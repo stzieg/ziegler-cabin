@@ -235,6 +235,10 @@
 }
 
 /* User Menu Toggle */
+.userMenuContainer {
+  position: relative;
+}
+
 .userMenuToggle {
   display: flex;
   align-items: center;

@@ -273,7 +273,7 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
       </div>
 
       {/* User Menu Toggle */}
-      <div ref={menuRef}>
+      <div ref={menuRef} className={styles.userMenuContainer}>
         <button
           type="button"
           className={`${styles.userMenuToggle} ${showUserMenu ? styles.menuOpen : ''}`}
@@ -336,6 +336,12 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
             <button
               type="button"
               className={styles.dropdownItem}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowUserMenu(false);
+                onLogout();
+              }}
               onClick={handleLogout}
               data-testid="dropdown-logout"
             >
