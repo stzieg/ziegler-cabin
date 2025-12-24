@@ -226,7 +226,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
     try {
       // Create account with Supabase Auth and mark invitation as used (Requirement 2.2)
-      await registerWithInvitation(
+      const result = await registerWithInvitation(
         state.formData.email, 
         state.formData.password, 
         {
@@ -236,9 +236,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         },
         state.formData.invitationToken
       );
-
-      // Call parent onSubmit handler
-      onSubmit(state.formData);
 
       // Clear form on successful submission
       setState(prev => ({
@@ -255,6 +252,14 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         touched: {},
         isSubmitted: true,
       }));
+
+      // If email confirmation is NOT required, call onSubmit to proceed
+      // Otherwise, show the success message and let user check email
+      if (!result.requiresEmailConfirmation) {
+        onSubmit(state.formData);
+      }
+      // If email confirmation IS required, the success message will show
+      // and user needs to check their email before they can log in
     } catch (error: any) {
       console.error('Registration error:', error);
       setState(prev => ({
