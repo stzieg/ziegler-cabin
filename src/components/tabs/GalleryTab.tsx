@@ -4,6 +4,57 @@ import { supabase } from '../../utils/supabase';
 import type { Photo, PhotoMetadata } from '../../types';
 import styles from './GalleryTab.module.css';
 
+/**
+ * Lazy loading photo component - only loads image when in viewport
+ */
+const LazyPhoto: React.FC<{
+  photo: Photo;
+  onClick: () => void;
+}> = ({ photo, onClick }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!imgRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '100px' }
+    );
+
+    observer.observe(imgRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={imgRef}
+      className={styles.photoItem}
+      data-testid="photo-item"
+      onClick={onClick}
+    >
+      {isInView ? (
+        <img
+          src={photo.url}
+          alt={photo.caption || photo.filename}
+          className={`${styles.photoImage} ${isLoaded ? styles.loaded : styles.loading}`}
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setIsLoaded(true)}
+        />
+      ) : (
+        <div className={styles.photoPlaceholder} />
+      )}
+    </div>
+  );
+};
+
 interface GalleryTabProps {
   user: User;
   formState?: Record<string, any>;
@@ -38,7 +89,9 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [photoToDelete, setPhotoToDelete] = useState<Photo | null>(null);
+  const [visibleCount, setVisibleCount] = useState(12); // Start with 12 photos
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   /**
    * Load photos from Supabase
@@ -399,6 +452,30 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
 
   const filteredPhotos = getFilteredAndSortedPhotos();
   const albums = getAlbums();
+  const visiblePhotos = filteredPhotos.slice(0, visibleCount);
+  const hasMorePhotos = visibleCount < filteredPhotos.length;
+
+  // Reset visible count when filter changes
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [filterAlbum]);
+
+  // Infinite scroll - load more when reaching bottom
+  useEffect(() => {
+    if (!loadMoreRef.current || !hasMorePhotos) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount(prev => Math.min(prev + 12, filteredPhotos.length));
+        }
+      },
+      { rootMargin: '200px' }
+    );
+
+    observer.observe(loadMoreRef.current);
+    return () => observer.disconnect();
+  }, [hasMorePhotos, filteredPhotos.length]);
 
   /**
    * Navigate to previous/next photo in full-screen viewer
@@ -590,54 +667,21 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
             </button>
           </div>
         ) : (
-          filteredPhotos.map((photo) => {
-            // Generate thumbnail URL using Supabase transform or fallback
-            const thumbnailUrl = photo.url.includes('supabase') 
-              ? `${photo.url}?width=400&height=400&resize=cover&quality=75`
-              : photo.url;
-            
-            return (
-              <div
+          <>
+            {visiblePhotos.map((photo) => (
+              <LazyPhoto
                 key={photo.id}
-                className={styles.photoItem}
-                data-testid="photo-item"
-                data-filename={photo.filename}
-                {...(photo.album_id && { 'data-album-id': photo.album_id })}
-                data-tags={photo.tags.join(',')}
+                photo={photo}
                 onClick={() => setSelectedPhoto(photo)}
-              >
-                <img
-                  src={thumbnailUrl}
-                  alt={photo.caption || photo.filename}
-                  className={styles.photoImage}
-                  loading="lazy"
-                  decoding="async"
-                  width="400"
-                  height="400"
-                />
-                <div className={styles.photoOverlay}>
-                  <div className={styles.photoInfo}>
-                    {photo.caption && (
-                      <p className={styles.photoCaption}>{photo.caption}</p>
-                    )}
-                    <p className={styles.photoDate}>
-                      {photo.metadata.dateTaken 
-                        ? new Date(photo.metadata.dateTaken).toLocaleDateString()
-                        : new Date(photo.upload_date).toLocaleDateString()
-                      }
-                    </p>
-                    {photo.tags.length > 0 && (
-                      <div className={styles.photoTags}>
-                        {photo.tags.map(tag => (
-                          <span key={tag} className={styles.tag}>{tag}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+              />
+            ))}
+            {/* Load more trigger */}
+            {hasMorePhotos && (
+              <div ref={loadMoreRef} className={styles.loadMoreTrigger}>
+                <div className={styles.spinner} />
               </div>
-            );
-          })
+            )}
+          </>
         )}
       </div>
 
