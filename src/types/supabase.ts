@@ -30,11 +30,12 @@ export type PriorityLevel = 'low' | 'normal' | 'high';
 
 export interface Reservation {
   id: string;             // UUID primary key
-  user_id: string;        // References auth.users.id
+  user_id: string | null; // References auth.users.id (null if using custom_name)
   start_date: string;     // Reservation start date (ISO date string)
   end_date: string;       // Reservation end date (ISO date string)
   guest_count: number;    // Number of guests (1-20)
   notes?: string;         // Optional reservation notes
+  custom_name?: string;   // Custom name for future users (admin only)
   created_at: string;     // Creation timestamp
   updated_at: string;     // Last update timestamp
   profiles?: {            // User profile data (when joined)

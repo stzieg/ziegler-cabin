@@ -6,8 +6,44 @@ import { weatherService, type WeatherForecast, type WeatherData } from '../utils
 import { SwapRequestModal } from './SwapRequestModal';
 import styles from './Calendar.module.css';
 
+// Color palette for reservations - visually distinct, accessible colors
+const RESERVATION_COLORS = [
+  { bg: '#e8f5e9', border: '#4caf50', text: '#1b5e20' }, // Green
+  { bg: '#e3f2fd', border: '#2196f3', text: '#0d47a1' }, // Blue
+  { bg: '#fff3e0', border: '#ff9800', text: '#e65100' }, // Orange
+  { bg: '#f3e5f5', border: '#9c27b0', text: '#4a148c' }, // Purple
+  { bg: '#e0f7fa', border: '#00bcd4', text: '#006064' }, // Cyan
+  { bg: '#fce4ec', border: '#e91e63', text: '#880e4f' }, // Pink
+  { bg: '#fff8e1', border: '#ffc107', text: '#ff6f00' }, // Amber
+  { bg: '#e8eaf6', border: '#3f51b5', text: '#1a237e' }, // Indigo
+  { bg: '#efebe9', border: '#795548', text: '#3e2723' }, // Brown
+  { bg: '#f1f8e9', border: '#8bc34a', text: '#33691e' }, // Light Green
+];
+
+/**
+ * Generate a consistent color index based on a string (user ID or name)
+ */
+const getColorIndex = (identifier: string): number => {
+  let hash = 0;
+  for (let i = 0; i < identifier.length; i++) {
+    const char = identifier.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash) % RESERVATION_COLORS.length;
+};
+
+/**
+ * Get color for a reservation based on user ID or custom name
+ */
+const getReservationColor = (reservation: Reservation) => {
+  const identifier = reservation.custom_name || reservation.user_id || 'default';
+  return RESERVATION_COLORS[getColorIndex(identifier)];
+};
+
 interface CalendarProps {
   user: User;
+  isAdmin?: boolean;
   onReservationCreate?: (reservation: Reservation) => void;
   onReservationUpdate?: (reservation: Reservation) => void;
 }
@@ -25,6 +61,14 @@ interface ReservationFormData {
   startDate: string;
   endDate: string;
   notes: string;
+  assignedUserId: string;
+  customName: string;
+}
+
+interface UserProfile {
+  id: string;
+  first_name: string;
+  last_name: string;
 }
 
 /**
@@ -33,6 +77,7 @@ interface ReservationFormData {
  */
 export const Calendar: React.FC<CalendarProps> = ({
   user,
+  isAdmin = false,
   onReservationCreate,
   onReservationUpdate,
 }) => {
@@ -49,9 +94,13 @@ export const Calendar: React.FC<CalendarProps> = ({
     startDate: '',
     endDate: '',
     notes: '',
+    assignedUserId: '',
+    customName: '',
   });
   const [showSwapModal, setShowSwapModal] = useState(false);
   const [swapTargetReservation, setSwapTargetReservation] = useState<Reservation | null>(null);
+  const [allUsers, setAllUsers] = useState<UserProfile[]>([]);
+  const [useCustomName, setUseCustomName] = useState(false);
 
   /**
    * Load reservations for the current month
@@ -120,7 +169,27 @@ export const Calendar: React.FC<CalendarProps> = ({
   useEffect(() => {
     loadReservations();
     loadWeatherForecast();
-  }, [loadReservations]);
+    if (isAdmin) {
+      loadAllUsers();
+    }
+  }, [loadReservations, isAdmin]);
+
+  /**
+   * Load all users for admin reservation assignment
+   */
+  const loadAllUsers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name')
+        .order('last_name');
+      
+      if (error) throw error;
+      setAllUsers(data || []);
+    } catch (err) {
+      console.error('Error loading users:', err);
+    }
+  };
 
   /**
    * Load weather forecast data
@@ -276,17 +345,27 @@ export const Calendar: React.FC<CalendarProps> = ({
     
     setSelectedDate(date);
     const dateStr = date.toISOString().split('T')[0];
+    const isFriday = date.getDay() === 5;
     
     // Check if there are existing reservations on this date
     const dayReservations = getReservationsForDate(date);
-    if (dayReservations.length > 0) {
+    
+    // On Fridays, check if all reservations are ENDING on this day (not starting or spanning)
+    // If so, allow creating a new reservation that starts on this Friday
+    const allEndingOnFriday = isFriday && dayReservations.length > 0 && 
+      dayReservations.every(r => r.end_date === dateStr);
+    
+    if (dayReservations.length > 0 && !allEndingOnFriday) {
       // Show existing reservation details
       setEditingReservation(dayReservations[0]);
       setFormData({
         startDate: dayReservations[0].start_date,
         endDate: dayReservations[0].end_date,
         notes: dayReservations[0].notes || '',
+        assignedUserId: dayReservations[0].user_id || '',
+        customName: dayReservations[0].custom_name || '',
       });
+      setUseCustomName(!!dayReservations[0].custom_name);
     } else {
       // Create new reservation - default end date is 1 week after start
       const endDate = new Date(date);
@@ -298,7 +377,10 @@ export const Calendar: React.FC<CalendarProps> = ({
         startDate: dateStr,
         endDate: endDateStr,
         notes: '',
+        assignedUserId: user.id,
+        customName: '',
       });
+      setUseCustomName(false);
     }
     
     setShowReservationForm(true);
@@ -324,12 +406,16 @@ export const Calendar: React.FC<CalendarProps> = ({
         throw new Error(`Reservation conflicts with existing booking for dates ${formData.startDate} to ${formData.endDate}`);
       }
       
-      const reservationData = {
-        user_id: user.id,
+      // Determine user_id - admin can assign to others or use custom name
+      const assignedUserId = isAdmin && useCustomName ? null : (isAdmin ? formData.assignedUserId : user.id);
+      
+      const reservationData: Record<string, unknown> = {
+        user_id: assignedUserId,
         start_date: formData.startDate,
         end_date: formData.endDate,
-        guest_count: 1, // Default value
+        guest_count: 1,
         notes: formData.notes || null,
+        custom_name: isAdmin && useCustomName ? formData.customName : null,
       };
       
       if (editingReservation) {
@@ -500,14 +586,22 @@ export const Calendar: React.FC<CalendarProps> = ({
                   {day.reservations.map((reservation) => {
                     const halfStart = isHalfDayStart(day.date, reservation);
                     const halfEnd = isHalfDayEnd(day.date, reservation);
+                    const color = getReservationColor(reservation);
                     return (
                       <div 
                         key={reservation.id} 
                         className={`${styles.reservationName} ${halfStart ? styles.halfDayStart : ''} ${halfEnd ? styles.halfDayEnd : ''}`}
+                        style={{
+                          backgroundColor: color.bg,
+                          borderLeft: `3px solid ${color.border}`,
+                          color: color.text,
+                        }}
                       >
-                        {reservation.profiles 
-                          ? `${reservation.profiles.first_name} ${reservation.profiles.last_name}`
-                          : 'Reserved'
+                        {reservation.custom_name 
+                          ? reservation.custom_name
+                          : reservation.profiles 
+                            ? `${reservation.profiles.first_name} ${reservation.profiles.last_name}`
+                            : 'Reserved'
                         }
                       </div>
                     );
@@ -534,15 +628,17 @@ export const Calendar: React.FC<CalendarProps> = ({
               {editingReservation ? 'Edit Reservation' : 'New Reservation'}
             </h3>
             
-            {/* Show reservation owner info if viewing someone else's reservation */}
-            {editingReservation && editingReservation.user_id !== user.id && (
+            {/* Show reservation owner info if viewing someone else's reservation (non-admin) */}
+            {editingReservation && editingReservation.user_id !== user.id && !isAdmin && (
               <div className={styles.ownerInfo}>
                 <p>
                   This reservation belongs to{' '}
                   <strong>
-                    {editingReservation.profiles
-                      ? `${editingReservation.profiles.first_name} ${editingReservation.profiles.last_name}`
-                      : 'another user'}
+                    {editingReservation.custom_name 
+                      ? editingReservation.custom_name
+                      : editingReservation.profiles
+                        ? `${editingReservation.profiles.first_name} ${editingReservation.profiles.last_name}`
+                        : 'another user'}
                   </strong>
                 </p>
                 <button
@@ -559,9 +655,67 @@ export const Calendar: React.FC<CalendarProps> = ({
               </div>
             )}
             
-            {/* Only show form if it's the user's reservation or a new one */}
-            {(!editingReservation || editingReservation.user_id === user.id) && (
+            {/* Show form if: new reservation, own reservation, or admin */}
+            {(!editingReservation || editingReservation.user_id === user.id || isAdmin) && (
               <form onSubmit={handleReservationSubmit}>
+                {/* Admin-only: User assignment */}
+                {isAdmin && (
+                  <div className={styles.adminSection}>
+                    {/* Show link option if editing a custom name reservation */}
+                    {editingReservation?.custom_name && (
+                      <div className={styles.linkNotice}>
+                        <p>This reservation uses a custom name: <strong>{editingReservation.custom_name}</strong></p>
+                        <p className={styles.linkHint}>To link to a registered user, uncheck "Use custom name" and select the user below.</p>
+                      </div>
+                    )}
+                    
+                    <div className={styles.formGroup}>
+                      <label className={styles.checkboxLabel}>
+                        <input
+                          type="checkbox"
+                          checked={useCustomName}
+                          onChange={(e) => setUseCustomName(e.target.checked)}
+                        />
+                        Use custom name (for future users)
+                      </label>
+                    </div>
+                    
+                    {useCustomName ? (
+                      <div className={styles.formGroup}>
+                        <label htmlFor="customName">Name:</label>
+                        <input
+                          id="customName"
+                          type="text"
+                          value={formData.customName}
+                          onChange={(e) => setFormData(prev => ({ ...prev, customName: e.target.value }))}
+                          placeholder="Enter name for reservation"
+                          required
+                        />
+                        <p className={styles.fieldHint}>
+                          ⚠️ Custom name reservations cannot use swap functionality until linked to a user.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className={styles.formGroup}>
+                        <label htmlFor="assignedUser">Assign to:</label>
+                        <select
+                          id="assignedUser"
+                          value={formData.assignedUserId}
+                          onChange={(e) => setFormData(prev => ({ ...prev, assignedUserId: e.target.value }))}
+                          required
+                        >
+                          <option value="">Select a user</option>
+                          {allUsers.map(u => (
+                            <option key={u.id} value={u.id}>
+                              {u.first_name} {u.last_name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
                 <div className={styles.formGroup}>
                   <label htmlFor="startDate">Start Date:</label>
                   <input
@@ -624,8 +778,8 @@ export const Calendar: React.FC<CalendarProps> = ({
               </form>
             )}
             
-            {/* Close button for viewing other's reservations */}
-            {editingReservation && editingReservation.user_id !== user.id && (
+            {/* Close button for non-admin viewing other's reservations */}
+            {editingReservation && editingReservation.user_id !== user.id && !isAdmin && (
               <div className={styles.formActions}>
                 <button
                   type="button"

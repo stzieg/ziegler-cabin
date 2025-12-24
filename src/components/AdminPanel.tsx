@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/SupabaseProvider';
 import { InvitationForm } from './InvitationForm';
 import { InvitationList } from './InvitationList';
 import { EmailTester } from './EmailTester';
+import { UnlinkedReservations } from './UnlinkedReservations';
 import { isUserAdmin } from '../utils/supabase';
 import { getAllInvitations } from '../utils/invitations';
 import type { Invitation } from '../types/supabase';
@@ -158,6 +159,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = () => {
             onRefresh={handleRefresh}
             isLoading={isLoading}
           />
+        </section>
+
+        <section className={styles.section} aria-labelledby="unlinked-reservations-title">
+          <h2 className={styles.sectionTitle} id="unlinked-reservations-title">Unlinked Reservations</h2>
+          <UnlinkedReservations />
         </section>
 
         <section className={styles.section} aria-labelledby="email-tester-title">

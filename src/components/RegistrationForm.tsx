@@ -366,6 +366,12 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
         type="submit"
         className={styles.submitButton}
         disabled={isLoading || !state.invitationValidated}
+        onTouchEnd={(e) => {
+          if (!isLoading && state.invitationValidated) {
+            e.preventDefault();
+            handleSubmit(e as unknown as React.FormEvent);
+          }
+        }}
       >
         {isLoading ? 'Creating Account...' : 'Create Account'}
       </button>

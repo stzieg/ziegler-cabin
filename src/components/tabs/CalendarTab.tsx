@@ -11,12 +11,13 @@ import styles from './CalendarTab.module.css';
 interface CalendarTabProps {
   user: User;
   formState?: Record<string, any>;
+  isAdmin?: boolean;
 }
 
 /**
  * Calendar Tab Content - Internal component that uses ViewState
  */
-const CalendarTabContent: React.FC<CalendarTabProps> = ({ user, formState }) => {
+const CalendarTabContent: React.FC<CalendarTabProps> = ({ user, formState, isAdmin }) => {
   const [notifications, setNotifications] = useState<string[]>([]);
   const { navigateToCalendar, clearReservationState, viewState, reservationState } = useViewState();
 
@@ -175,6 +176,7 @@ const CalendarTabContent: React.FC<CalendarTabProps> = ({ user, formState }) => 
         <div className={styles.calendarContainer}>
           <Calendar
             user={user}
+            isAdmin={isAdmin}
             onReservationCreate={handleReservationCreate}
             onReservationUpdate={handleReservationUpdate}
           />
@@ -188,10 +190,10 @@ const CalendarTabContent: React.FC<CalendarTabProps> = ({ user, formState }) => 
  * Calendar Tab Component - Reservation scheduling interface
  * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 6.2, 1.1, 1.2, 1.3, 1.5, 4.2
  */
-export const CalendarTab: React.FC<CalendarTabProps> = ({ user, formState }) => {
+export const CalendarTab: React.FC<CalendarTabProps> = ({ user, formState, isAdmin }) => {
   return (
     <ViewStateProvider>
-      <CalendarTabContent user={user} formState={formState} />
+      <CalendarTabContent user={user} formState={formState} isAdmin={isAdmin} />
     </ViewStateProvider>
   );
 };

@@ -1,0 +1,165 @@
+.container {
+  padding: 1rem;
+  background: var(--glass-bg-content);
+  border-radius: var(--border-radius-base);
+}
+
+.loading {
+  color: var(--color-charcoal);
+  text-align: center;
+  padding: 1rem;
+}
+
+.error {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-base);
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.empty {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--color-forest-green);
+}
+
+.empty p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.description {
+  color: var(--color-charcoal);
+  font-size: 0.875rem;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--border-radius-base);
+  gap: 1rem;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.customName {
+  font-weight: 600;
+  color: var(--color-deep-brown);
+  font-size: 0.95rem;
+}
+
+.dates {
+  font-size: 0.8rem;
+  color: var(--color-charcoal);
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.userSelect {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: var(--border-radius-base);
+  font-size: 0.875rem;
+  background: white;
+  min-width: 150px;
+  cursor: pointer;
+}
+
+.userSelect:focus {
+  outline: none;
+  border-color: var(--color-forest-green);
+  box-shadow: 0 0 0 2px rgba(45, 80, 22, 0.1);
+}
+
+.userSelect:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.linkButton {
+  padding: 0.5rem 1rem;
+  background: var(--color-forest-green);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-base);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.linkButton:hover:not(:disabled) {
+  background: var(--button-bg-primary-hover);
+}
+
+.linkButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refreshButton {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: var(--color-forest-green);
+  border: 1px solid var(--color-forest-green);
+  border-radius: var(--border-radius-base);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refreshButton:hover:not(:disabled) {
+  background: rgba(45, 80, 22, 0.05);
+}
+
+.refreshButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .userSelect {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .linkButton {
+    width: 100%;
+  }
+}

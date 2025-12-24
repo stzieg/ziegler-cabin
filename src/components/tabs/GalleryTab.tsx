@@ -696,8 +696,18 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
           <div className={styles.fullScreenContent} onClick={(e) => e.stopPropagation()}>
             <button
               className={styles.fullScreenCloseButton}
-              onClick={() => setSelectedPhoto(null)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setSelectedPhoto(null);
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setSelectedPhoto(null);
+              }}
               aria-label="Close full-screen photo viewer"
+              type="button"
             >
               ✕
             </button>

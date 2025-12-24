@@ -209,7 +209,6 @@
 }
 
 .reservationName {
-  background: #e8f4e8;
   padding: 0.125rem 0.25rem;
   border-radius: 4px;
   margin-bottom: 0.125rem;
@@ -221,19 +220,18 @@
   width: 100%;
   box-sizing: border-box;
   max-width: 100%;
+  font-weight: 500;
 }
 
 /* Half-day reservation styles for Fridays - positioned left or right */
 .halfDayStart {
   margin-left: auto;
   width: 50% !important;
-  border-left: 2px solid var(--color-forest-green);
 }
 
 .halfDayEnd {
   margin-right: auto;
   width: 50% !important;
-  border-right: 2px solid var(--color-forest-green);
 }
 
 .loading {
@@ -294,20 +292,76 @@
 }
 
 .formGroup input,
-.formGroup textarea {
+.formGroup textarea,
+.formGroup select {
   width: 100%;
   padding: var(--input-padding-vertical) var(--input-padding-horizontal);
   border: var(--border-width-base) solid var(--input-border-color);
   border-radius: var(--border-radius-base);
   font-size: var(--font-size-base);
   transition: border-color 0.2s ease;
+  background: white;
 }
 
 .formGroup input:focus,
-.formGroup textarea:focus {
+.formGroup textarea:focus,
+.formGroup select:focus {
   outline: none;
   border-color: var(--input-border-color-focus);
   box-shadow: var(--shadow-focus);
+}
+
+/* Admin section styles */
+.adminSection {
+  background: rgba(45, 80, 22, 0.05);
+  border: 1px solid rgba(45, 80, 22, 0.2);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+}
+
+.linkNotice {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: var(--border-radius-base);
+  padding: 0.75rem;
+  margin-bottom: var(--spacing-2);
+}
+
+.linkNotice p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #856404;
+}
+
+.linkNotice p:first-child {
+  margin-bottom: 0.25rem;
+}
+
+.linkHint {
+  font-size: 0.8rem !important;
+  opacity: 0.9;
+}
+
+.fieldHint {
+  font-size: 0.75rem;
+  color: #856404;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.checkboxLabel {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: var(--font-weight-normal) !important;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
 }
 
 .formActions {

@@ -1,17 +1,22 @@
 .authContainer {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   min-height: 100vh;
   padding: var(--spacing-4);
   box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Responsive adjustments */
 @media (max-width: 767px) {
   .authContainer {
-    padding: var(--spacing-4);
+    padding: var(--spacing-3);
+    padding-bottom: calc(var(--spacing-3) + env(safe-area-inset-bottom, 0px));
+    align-items: flex-start;
+    padding-top: var(--spacing-4);
   }
 }
 
