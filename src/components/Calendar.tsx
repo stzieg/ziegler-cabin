@@ -641,17 +641,25 @@ export const Calendar: React.FC<CalendarProps> = ({
                         : 'another user'}
                   </strong>
                 </p>
-                <button
-                  type="button"
-                  className={styles.swapButton}
-                  onClick={() => {
-                    setSwapTargetReservation(editingReservation);
-                    setShowSwapModal(true);
-                    setShowReservationForm(false);
-                  }}
-                >
-                  🔄 Request Swap
-                </button>
+                {/* Only show swap button if reservation has a real user (not custom_name) */}
+                {editingReservation.user_id && !editingReservation.custom_name && (
+                  <button
+                    type="button"
+                    className={styles.swapButton}
+                    onClick={() => {
+                      setSwapTargetReservation(editingReservation);
+                      setShowSwapModal(true);
+                      setShowReservationForm(false);
+                    }}
+                  >
+                    🔄 Request Swap
+                  </button>
+                )}
+                {editingReservation.custom_name && (
+                  <p className={styles.fieldHint}>
+                    Swap requests are not available for reservations that haven't been linked to a user yet.
+                  </p>
+                )}
               </div>
             )}
             

@@ -238,9 +238,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
       );
 
       // If email confirmation is NOT required, user is automatically signed in
-      // The auth state change listener will handle the redirect
-      // Just call onSubmit to signal success
+      // Clear the URL token parameter and redirect to home
       if (!result.requiresEmailConfirmation) {
+        // Clear the invitation token from URL
+        window.history.replaceState({}, '', window.location.pathname);
         onSubmit(state.formData);
       } else {
         // Email confirmation required - show success message
