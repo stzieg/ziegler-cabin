@@ -745,8 +745,22 @@
   }
 
   .photoGrid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  /* Disable hover effects on mobile for better performance */
+  .photoItem {
+    border-radius: 4px;
+  }
+
+  .photoItem:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .photoItem:hover .photoImage {
+    transform: none;
   }
 
   /* Hide photo overlay info on mobile for faster loading */
@@ -783,7 +797,12 @@
 
 @media (max-width: 480px) {
   .photoGrid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .photoItem {
+    border-radius: 2px;
   }
 
   .controls {

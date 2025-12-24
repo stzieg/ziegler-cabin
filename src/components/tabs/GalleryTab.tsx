@@ -82,7 +82,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
   }, []);
 
   /**
-   * Handle photo upload
+   * Handle photo upload with image compression
    * Requirements: 4.2 - Photo upload with metadata capture
    */
   const handlePhotoUpload = async (event: React.FormEvent) => {
@@ -97,25 +97,25 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
       setUploading(true);
       setError(null);
 
+      // Compress image before upload for better performance
+      const compressedFile = await compressImage(selectedFile);
+      const fileToUpload = compressedFile || selectedFile;
+
       // Create unique filename
       const fileExt = selectedFile.name.split('.').pop();
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
-      // Skip bucket check since diagnostics confirmed it works
-      // The listBuckets() API has issues but direct bucket access works fine
-
       // Upload file to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('photos')
-        .upload(fileName, selectedFile, {
-          cacheControl: '3600',
+        .upload(fileName, fileToUpload, {
+          cacheControl: '31536000', // Cache for 1 year
           upsert: false
         });
 
       if (uploadError) {
         console.error('Storage upload error:', uploadError);
         
-        // Provide more specific error messages
         if (uploadError.message.includes('Bucket not found')) {
           throw new Error('Photo storage bucket not found. Please contact support to set up photo storage.');
         } else if (uploadError.message.includes('File size')) {
@@ -136,35 +136,11 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
         throw new Error('Failed to generate public URL for uploaded photo.');
       }
 
-      // Extract metadata
+      // Extract basic metadata (skip heavy EXIF parsing)
       const metadata: PhotoMetadata = {
-        size: selectedFile.size,
+        size: fileToUpload.size,
         format: selectedFile.type.split('/')[1] || 'unknown'
       };
-
-      // If it's an image, try to get dimensions and EXIF data
-      if (selectedFile.type.startsWith('image/')) {
-        try {
-          const dimensions = await getImageDimensions(selectedFile);
-          if (dimensions) {
-            metadata.dimensions = dimensions;
-          }
-        } catch (dimensionError) {
-          console.warn('Could not extract image dimensions:', dimensionError);
-          // Continue without dimensions - not critical
-        }
-
-        // Extract EXIF date taken
-        try {
-          const exifDate = await getExifDateTaken(selectedFile);
-          if (exifDate) {
-            metadata.dateTaken = exifDate;
-          }
-        } catch (exifError) {
-          console.warn('Could not extract EXIF date:', exifError);
-          // Continue without EXIF date - not critical
-        }
-      }
 
       // Parse tags from form data
       const tags = uploadData.tags
@@ -188,7 +164,6 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
       if (dbError) {
         console.error('Database insert error:', dbError);
         
-        // Try to clean up the uploaded file if database insert fails
         try {
           await supabase.storage.from('photos').remove([fileName]);
         } catch (cleanupError) {
@@ -213,8 +188,6 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
       }
       
       await loadPhotos();
-      
-      // Show success message briefly
       setError(null);
       
     } catch (err) {
@@ -228,6 +201,65 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
     } finally {
       setUploading(false);
     }
+  };
+
+  /**
+   * Compress image before upload to reduce file size and upload time
+   */
+  const compressImage = (file: File): Promise<File | null> => {
+    return new Promise((resolve) => {
+      // Skip compression for small files or non-images
+      if (file.size < 500 * 1024 || !file.type.startsWith('image/')) {
+        resolve(null);
+        return;
+      }
+
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(null);
+          return;
+        }
+
+        // Calculate new dimensions (max 2000px on longest side)
+        const maxSize = 2000;
+        let { width, height } = img;
+        
+        if (width > maxSize || height > maxSize) {
+          if (width > height) {
+            height = (height / width) * maxSize;
+            width = maxSize;
+          } else {
+            width = (width / height) * maxSize;
+            height = maxSize;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            } else {
+              resolve(null);
+            }
+          },
+          'image/jpeg',
+          0.85 // 85% quality
+        );
+      };
+      img.onerror = () => resolve(null);
+      img.src = URL.createObjectURL(file);
+    });
   };
 
   /**
@@ -289,130 +321,6 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
       }
     } finally {
       setDeleting(false);
-    }
-  };
-
-  /**
-   * Get image dimensions from file
-   */
-  const getImageDimensions = (file: File): Promise<{ width: number; height: number } | null> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        resolve({ width: img.naturalWidth, height: img.naturalHeight });
-      };
-      img.onerror = () => resolve(null);
-      img.src = URL.createObjectURL(file);
-    });
-  };
-
-  /**
-   * Extract EXIF date taken from image file
-   */
-  const getExifDateTaken = (file: File): Promise<string | null> => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      
-      reader.onload = (e) => {
-        try {
-          const arrayBuffer = e.target?.result as ArrayBuffer;
-          const dataView = new DataView(arrayBuffer);
-          
-          // Check for JPEG EXIF data
-          if (dataView.getUint16(0) !== 0xFFD8) {
-            resolve(null); // Not a JPEG
-            return;
-          }
-          
-          let offset = 2;
-          let marker;
-          
-          // Find EXIF marker (0xFFE1)
-          while (offset < dataView.byteLength) {
-            marker = dataView.getUint16(offset);
-            if (marker === 0xFFE1) {
-              // Found EXIF marker
-              const exifLength = dataView.getUint16(offset + 2);
-              const exifData = new DataView(arrayBuffer, offset + 4, exifLength - 2);
-              
-              // Look for "Exif" identifier
-              if (exifData.getUint32(0) === 0x45786966) { // "Exif"
-                const dateTime = extractDateTimeFromExif(exifData);
-                resolve(dateTime);
-                return;
-              }
-            }
-            
-            if (marker === 0xFFDA) break; // Start of scan data
-            offset += 2 + dataView.getUint16(offset + 2);
-          }
-          
-          resolve(null); // No EXIF date found
-        } catch (error) {
-          console.warn('Error parsing EXIF data:', error);
-          resolve(null);
-        }
-      };
-      
-      reader.onerror = () => resolve(null);
-      reader.readAsArrayBuffer(file.slice(0, 65536)); // Read first 64KB for EXIF
-    });
-  };
-
-  /**
-   * Extract DateTime from EXIF data
-   */
-  const extractDateTimeFromExif = (exifData: DataView): string | null => {
-    try {
-      // Skip to TIFF header (after "Exif\0\0")
-      let offset = 6;
-      
-      // Check byte order
-      const byteOrder = exifData.getUint16(offset);
-      const littleEndian = byteOrder === 0x4949;
-      
-      // Get first IFD offset
-      offset += 2; // Skip byte order marker
-      offset += 2; // Skip TIFF magic number
-      let ifdOffset = littleEndian ? exifData.getUint32(offset, true) : exifData.getUint32(offset, false);
-      
-      // Read IFD entries
-      offset = 6 + ifdOffset;
-      const numEntries = littleEndian ? exifData.getUint16(offset, true) : exifData.getUint16(offset, false);
-      offset += 2;
-      
-      // Look for DateTime tag (0x0132) or DateTimeOriginal (0x9003)
-      for (let i = 0; i < numEntries; i++) {
-        const entryOffset = offset + (i * 12);
-        const tag = littleEndian ? exifData.getUint16(entryOffset, true) : exifData.getUint16(entryOffset, false);
-        
-        if (tag === 0x9003 || tag === 0x0132) { // DateTimeOriginal or DateTime
-          const type = littleEndian ? exifData.getUint16(entryOffset + 2, true) : exifData.getUint16(entryOffset + 2, false);
-          const count = littleEndian ? exifData.getUint32(entryOffset + 4, true) : exifData.getUint32(entryOffset + 4, false);
-          
-          if (type === 2 && count === 20) { // ASCII string, 20 chars
-            const valueOffset = littleEndian ? exifData.getUint32(entryOffset + 8, true) : exifData.getUint32(entryOffset + 8, false);
-            
-            // Read the date string
-            let dateString = '';
-            const stringOffset = 6 + valueOffset;
-            for (let j = 0; j < 19; j++) { // 19 chars (excluding null terminator)
-              dateString += String.fromCharCode(exifData.getUint8(stringOffset + j));
-            }
-            
-            // Convert EXIF date format "YYYY:MM:DD HH:MM:SS" to ISO format
-            if (dateString.match(/^\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2}$/)) {
-              const isoDate = dateString.replace(/^(\d{4}):(\d{2}):(\d{2})/, '$1-$2-$3') + 'Z';
-              return isoDate;
-            }
-          }
-        }
-      }
-      
-      return null;
-    } catch (error) {
-      console.warn('Error extracting DateTime from EXIF:', error);
-      return null;
     }
   };
 
@@ -682,44 +590,54 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
             </button>
           </div>
         ) : (
-          filteredPhotos.map((photo) => (
-            <div
-              key={photo.id}
-              className={styles.photoItem}
-              data-testid="photo-item"
-              data-filename={photo.filename}
-              {...(photo.album_id && { 'data-album-id': photo.album_id })}
-              data-tags={photo.tags.join(',')}
-              onClick={() => setSelectedPhoto(photo)}
-            >
-              <img
-                src={photo.url}
-                alt={photo.caption || photo.filename}
-                className={styles.photoImage}
-                loading="lazy"
-              />
-              <div className={styles.photoOverlay}>
-                <div className={styles.photoInfo}>
-                  {photo.caption && (
-                    <p className={styles.photoCaption}>{photo.caption}</p>
-                  )}
-                  <p className={styles.photoDate}>
-                    {photo.metadata.dateTaken 
-                      ? new Date(photo.metadata.dateTaken).toLocaleDateString()
-                      : new Date(photo.upload_date).toLocaleDateString()
-                    }
-                  </p>
-                  {photo.tags.length > 0 && (
-                    <div className={styles.photoTags}>
-                      {photo.tags.map(tag => (
-                        <span key={tag} className={styles.tag}>{tag}</span>
-                      ))}
-                    </div>
-                  )}
+          filteredPhotos.map((photo) => {
+            // Generate thumbnail URL using Supabase transform or fallback
+            const thumbnailUrl = photo.url.includes('supabase') 
+              ? `${photo.url}?width=400&height=400&resize=cover&quality=75`
+              : photo.url;
+            
+            return (
+              <div
+                key={photo.id}
+                className={styles.photoItem}
+                data-testid="photo-item"
+                data-filename={photo.filename}
+                {...(photo.album_id && { 'data-album-id': photo.album_id })}
+                data-tags={photo.tags.join(',')}
+                onClick={() => setSelectedPhoto(photo)}
+              >
+                <img
+                  src={thumbnailUrl}
+                  alt={photo.caption || photo.filename}
+                  className={styles.photoImage}
+                  loading="lazy"
+                  decoding="async"
+                  width="400"
+                  height="400"
+                />
+                <div className={styles.photoOverlay}>
+                  <div className={styles.photoInfo}>
+                    {photo.caption && (
+                      <p className={styles.photoCaption}>{photo.caption}</p>
+                    )}
+                    <p className={styles.photoDate}>
+                      {photo.metadata.dateTaken 
+                        ? new Date(photo.metadata.dateTaken).toLocaleDateString()
+                        : new Date(photo.upload_date).toLocaleDateString()
+                      }
+                    </p>
+                    {photo.tags.length > 0 && (
+                      <div className={styles.photoTags}>
+                        {photo.tags.map(tag => (
+                          <span key={tag} className={styles.tag}>{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
