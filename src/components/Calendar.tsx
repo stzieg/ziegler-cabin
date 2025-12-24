@@ -20,6 +20,22 @@ const RESERVATION_COLORS = [
   { bg: '#f1f8e9', border: '#8bc34a', text: '#33691e' }, // Light Green
 ];
 
+// Specific color overrides for family members
+const COLORS = {
+  red: { bg: '#ffebee', border: '#f44336', text: '#b71c1c' },
+  purple: { bg: '#f3e5f5', border: '#9c27b0', text: '#4a148c' },
+  orange: { bg: '#fff3e0', border: '#ff9800', text: '#e65100' },
+  blue: { bg: '#e3f2fd', border: '#2196f3', text: '#0d47a1' },
+};
+
+// Name-based color overrides (case-insensitive)
+const NAME_COLOR_OVERRIDES: Record<string, typeof COLORS.red> = {
+  'todd ziegler': COLORS.red,
+  'mark ziegler': COLORS.purple,
+  'paul ziegler': COLORS.orange,
+  'dan ziegler': COLORS.blue,
+};
+
 /**
  * Generate a consistent color index based on a string (user ID or name)
  */
@@ -37,6 +53,15 @@ const getColorIndex = (identifier: string): number => {
  * Get color for a reservation based on user ID or custom name
  */
 const getReservationColor = (reservation: Reservation) => {
+  // Check for name-based override first
+  const displayName = reservation.custom_name || 
+    (reservation.profiles ? `${reservation.profiles.first_name} ${reservation.profiles.last_name}` : '');
+  
+  const nameOverride = NAME_COLOR_OVERRIDES[displayName.toLowerCase().trim()];
+  if (nameOverride) {
+    return nameOverride;
+  }
+  
   const identifier = reservation.custom_name || reservation.user_id || 'default';
   return RESERVATION_COLORS[getColorIndex(identifier)];
 };
