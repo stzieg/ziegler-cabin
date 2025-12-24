@@ -49,7 +49,7 @@
   margin: 0;
   letter-spacing: -0.01em;
   text-shadow: 0 2px 8px rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--glass-bg-content);
   padding: 0.5rem 1.5rem;
   border-radius: 8px;
 }

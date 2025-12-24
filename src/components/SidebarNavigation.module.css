@@ -4,7 +4,7 @@
 .sidebarNavigation {
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--glass-bg-sidebar);
   border-right: 1px solid #e2e8f0;
   transition: width 0.3s ease;
   overflow-y: auto;

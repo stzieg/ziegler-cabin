@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   padding: var(--spacing-3) var(--spacing-4);
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--glass-bg-header);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(226, 232, 240, 0.7);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);

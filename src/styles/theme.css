@@ -107,6 +107,13 @@
   --card-border-over-image: rgba(45, 80, 22, 0.3);
   --card-shadow-over-image: 0 4px 12px rgba(0, 0, 0, 0.25);
   
+  /* Consistent transparency system */
+  --glass-bg-header: rgba(255, 255, 255, 0.92);
+  --glass-bg-content: rgba(255, 255, 255, 0.92);
+  --glass-bg-sidebar: rgba(255, 255, 255, 0.95);
+  --glass-bg-modal: rgba(255, 255, 255, 0.95);
+  --glass-bg-light: rgba(255, 255, 255, 0.7);
+  
   /* Modal backgrounds - solid for readability */
   --modal-bg: white;
 }

@@ -16,7 +16,7 @@
   text-align: center;
   max-width: 600px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--glass-bg-content);
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }

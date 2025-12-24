@@ -11,7 +11,7 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: var(--spacing-3);
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--glass-bg-content);
   padding: 0.75rem var(--spacing-3);
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -48,7 +48,7 @@
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--glass-bg-content);
   padding: 0.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -747,7 +747,7 @@
 .modalHeader {
   padding: var(--spacing-4);
   border-bottom: 1px solid #e5e7eb;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--glass-bg-content);
 }
 
 .modalHeader h3 {
