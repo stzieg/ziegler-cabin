@@ -108,9 +108,11 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    // Use 'click' instead of 'mousedown' to avoid race conditions on mobile
+    // where mousedown fires before the button's onClick handler
+    document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, []);
 
@@ -138,11 +140,15 @@ export const HeaderNavigation: React.FC<HeaderNavigationProps> = ({
   };
 
   /**
-   * Handle logout
+   * Handle logout - ensure logout completes before closing menu
    */
-  const handleLogout = () => {
-    onLogout();
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Close menu first to provide immediate feedback
     setShowUserMenu(false);
+    // Then trigger logout
+    onLogout();
   };
 
   /**
