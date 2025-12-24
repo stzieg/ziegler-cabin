@@ -64,6 +64,18 @@ export const SwapRequestModal: React.FC<SwapRequestModalProps> = ({
 
   const loadUserDetails = async () => {
     try {
+      // If target reservation has a custom name (no user_id), use that
+      if (targetReservation.custom_name) {
+        setTargetUserName(targetReservation.custom_name);
+        // Can't send swap request to custom name reservations - no email
+        return;
+      }
+
+      // Skip if no user_id
+      if (!targetReservation.user_id) {
+        return;
+      }
+
       // Get target user's email and name
       const { data: targetProfile } = await supabase
         .from('profiles')
