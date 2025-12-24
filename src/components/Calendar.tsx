@@ -26,6 +26,7 @@ const COLORS = {
   purple: { bg: '#f3e5f5', border: '#9c27b0', text: '#4a148c' },
   orange: { bg: '#fff3e0', border: '#ff9800', text: '#e65100' },
   blue: { bg: '#e3f2fd', border: '#2196f3', text: '#0d47a1' },
+  pink: { bg: '#fff0f5', border: '#ffb6c1', text: '#d5546d' },
 };
 
 // Name-based color overrides (case-insensitive)
@@ -34,6 +35,7 @@ const NAME_COLOR_OVERRIDES: Record<string, typeof COLORS.red> = {
   'mark ziegler': COLORS.purple,
   'paul ziegler': COLORS.orange,
   'dan ziegler': COLORS.blue,
+  'emily ziegler': COLORS.pink,
 };
 
 /**
@@ -156,18 +158,29 @@ export const Calendar: React.FC<CalendarProps> = ({
       let enrichedReservations = reservationsData || [];
       
       if (reservationsData && reservationsData.length > 0) {
-        const userIds = [...new Set(reservationsData.map(r => r.user_id))];
+        // Filter out null user_ids (custom_name reservations)
+        const userIds = [...new Set(reservationsData.map(r => r.user_id).filter(id => id != null))];
         
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('id, first_name, last_name')
-          .in('id', userIds);
+        if (userIds.length > 0) {
+          const { data: profilesData, error: profilesError } = await supabase
+            .from('profiles')
+            .select('id, first_name, last_name')
+            .in('id', userIds);
 
-        if (!profilesError && profilesData) {
-          // Merge profile data with reservations
+          if (!profilesError && profilesData) {
+            // Merge profile data with reservations
+            enrichedReservations = reservationsData.map(reservation => ({
+              ...reservation,
+              profiles: reservation.user_id 
+                ? profilesData.find(profile => profile.id === reservation.user_id)
+                : undefined
+            }));
+          }
+        } else {
+          // All reservations are custom_name, no profiles to fetch
           enrichedReservations = reservationsData.map(reservation => ({
             ...reservation,
-            profiles: profilesData.find(profile => profile.id === reservation.user_id)
+            profiles: undefined
           }));
         }
       }
