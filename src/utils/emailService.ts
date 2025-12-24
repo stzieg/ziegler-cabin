@@ -19,8 +19,7 @@ export interface EmailSendResult {
 }
 
 export interface EmailServiceConfig {
-  provider: 'supabase' | 'sendgrid' | 'mailgun' | 'resend' | 'console';
-  apiKey?: string;
+  provider: 'resend' | 'console';
   fromEmail?: string;
   fromName?: string;
 }
@@ -33,8 +32,8 @@ export class EmailService {
 
   constructor(config: EmailServiceConfig) {
     this.config = {
-      fromEmail: 'noreply@cabin.family',
-      fromName: 'Cabin Management Team',
+      fromEmail: 'noreply@zieglercabin.com',
+      fromName: 'Ziegler Family Cabin',
       ...config
     };
   }
@@ -74,12 +73,6 @@ export class EmailService {
 
       // Send email based on provider
       switch (this.config.provider) {
-        case 'supabase':
-          return await this.sendViaSupabase(recipientEmail, subject, htmlContent, textContent);
-        case 'sendgrid':
-          return await this.sendViaSendGrid(recipientEmail, subject, htmlContent, textContent);
-        case 'mailgun':
-          return await this.sendViaMailgun(recipientEmail, subject, htmlContent, textContent);
         case 'resend':
           return await this.sendViaResend(recipientEmail, subject, htmlContent, textContent);
         case 'console':
@@ -96,87 +89,26 @@ export class EmailService {
   }
 
   /**
-   * Send email via Supabase Edge Functions
-   * This calls a Supabase Edge Function that handles email sending via SendGrid
+   * Send email via Resend (using Vercel serverless function)
    */
-  private async sendViaSupabase(
+  private async sendViaResend(
     to: string,
     subject: string,
     html: string,
     text: string
   ): Promise<EmailSendResult> {
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey) {
-        throw new Error('Supabase configuration missing. Please check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
-      }
-
-      const response = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseKey}`
-        },
-        body: JSON.stringify({
-          to,
-          subject,
-          html,
-          text
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(`Supabase Edge Function error: ${response.status} ${errorData}`);
-      }
-
-      const result = await response.json();
-      return {
-        success: result.success,
-        messageId: result.messageId,
-        error: result.error
-      };
-    } catch (error: any) {
-      console.error('Supabase email sending error:', error);
-      return {
-        success: false,
-        error: error.message || 'Failed to send email via Supabase'
-      };
-    }
-  }
-
-  /**
-   * Send email via SendGrid (using proxy server to avoid CORS)
-   */
-  private async sendViaSendGrid(
-    to: string,
-    subject: string,
-    html: string,
-    text: string
-  ): Promise<EmailSendResult> {
-    try {
-      // Validate configuration
-      if (!this.config.apiKey) {
-        throw new Error('SendGrid API key is required. Please set VITE_EMAIL_API_KEY in your .env file.');
-      }
-
-      if (!this.config.fromEmail) {
-        throw new Error('From email is required. Please set VITE_EMAIL_FROM in your .env file.');
-      }
-
-      console.log('Sending email via SendGrid proxy:', {
+      console.log('Sending email via Resend:', {
         to,
         from: this.config.fromEmail,
-        subject,
-        apiKeyPrefix: this.config.apiKey?.substring(0, 10) + '...'
+        subject
       });
 
-      // Use local proxy server to avoid CORS issues
-      const proxyUrl = 'http://localhost:3001/send-email';
-      
-      const response = await fetch(proxyUrl, {
+      // Use the Vercel serverless function endpoint
+      // In production, use relative URL; in dev, try the current origin
+      const apiUrl = '/api/send-email';
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -189,30 +121,14 @@ export class EmailService {
         })
       });
 
-      if (!response.ok) {
-        const errorData = await response.text();
-        let errorMessage = `SendGrid proxy error: ${response.status}`;
-        
-        try {
-          const errorJson = JSON.parse(errorData);
-          if (errorJson.error) {
-            errorMessage = errorJson.error;
-          }
-        } catch (parseError) {
-          errorMessage += ` - ${errorData}`;
-        }
-        
-        throw new Error(errorMessage);
-      }
-
       const result = await response.json();
-      
-      if (!result.success) {
-        throw new Error(result.error || 'Unknown SendGrid error');
-      }
 
-      console.log('Email sent successfully via SendGrid:', {
-        messageId: result.messageId,
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || `API error: ${response.status}`);
+      }
+      
+      console.log('Email sent successfully via Resend:', {
+        id: result.messageId,
         to
       });
 
@@ -221,154 +137,19 @@ export class EmailService {
         messageId: result.messageId
       };
     } catch (error: any) {
-      console.error('SendGrid email sending error:', error);
-      
-      // Provide helpful error messages
-      let userFriendlyError = error.message;
-      
-      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-        userFriendlyError = 'Cannot connect to email proxy server. Please start the proxy server with: node email-proxy-server.js';
-      } else if (error.message.includes('ECONNREFUSED')) {
-        userFriendlyError = 'Email proxy server not running. Please start it with: node email-proxy-server.js';
-      }
-      
-      return {
-        success: false,
-        error: userFriendlyError
-      };
-    }
-  }
-
-  /**
-   * Send email via Resend
-   */
-  private async sendViaResend(
-    to: string,
-    subject: string,
-    html: string,
-    text: string
-  ): Promise<EmailSendResult> {
-    try {
-      // Validate configuration
-      if (!this.config.apiKey) {
-        throw new Error('Resend API key is required. Please set VITE_EMAIL_API_KEY in your .env file.');
-      }
-
-      if (!this.config.fromEmail) {
-        throw new Error('From email is required. Please set VITE_EMAIL_FROM in your .env file.');
-      }
-
-      console.log('Sending email via Resend:', {
-        to,
-        from: this.config.fromEmail,
-        subject,
-        apiKeyPrefix: this.config.apiKey?.substring(0, 10) + '...'
-      });
-
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.config.apiKey}`
-        },
-        body: JSON.stringify({
-          from: `${this.config.fromName} <${this.config.fromEmail}>`,
-          to: [to],
-          subject,
-          html,
-          text
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        let errorMessage = `Resend API error: ${response.status}`;
-        
-        try {
-          const errorJson = JSON.parse(errorData);
-          if (errorJson.message) {
-            errorMessage = errorJson.message;
-          }
-        } catch (parseError) {
-          errorMessage += ` - ${errorData}`;
-        }
-        
-        throw new Error(errorMessage);
-      }
-
-      const result = await response.json();
-      
-      console.log('Email sent successfully via Resend:', {
-        id: result.id,
-        to
-      });
-
-      return {
-        success: true,
-        messageId: result.id
-      };
-    } catch (error: any) {
       console.error('Resend email sending error:', error);
       
-      // Provide helpful error messages
       let userFriendlyError = error.message;
       
       if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-        userFriendlyError = 'Cannot connect to Resend API. Please check your internet connection.';
-      } else if (error.message.includes('401')) {
-        userFriendlyError = 'Invalid Resend API key. Please check your VITE_EMAIL_API_KEY.';
-      } else if (error.message.includes('domain not verified')) {
-        userFriendlyError = 'Domain not verified in Resend. Please verify your domain in the Resend dashboard.';
+        userFriendlyError = 'Cannot connect to email service. Please check your internet connection.';
+      } else if (error.message.includes('not configured')) {
+        userFriendlyError = 'Email service not configured. Please contact the administrator.';
       }
       
       return {
         success: false,
         error: userFriendlyError
-      };
-    }
-  }
-
-  /**
-   * Send email via Mailgun
-   */
-  private async sendViaMailgun(
-    to: string,
-    subject: string,
-    html: string,
-    text: string
-  ): Promise<EmailSendResult> {
-    try {
-      const domain = this.config.fromEmail?.split('@')[1] || 'cabin.family';
-      const formData = new FormData();
-      formData.append('from', `${this.config.fromName} <${this.config.fromEmail}>`);
-      formData.append('to', to);
-      formData.append('subject', subject);
-      formData.append('text', text);
-      formData.append('html', html);
-
-      const response = await fetch(`https://api.mailgun.net/v3/${domain}/messages`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${btoa(`api:${this.config.apiKey}`)}`
-        },
-        body: formData
-      });
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(`Mailgun API error: ${response.status} ${errorData}`);
-      }
-
-      const result = await response.json();
-      return {
-        success: true,
-        messageId: result.id
-      };
-    } catch (error: any) {
-      console.error('Mailgun email sending error:', error);
-      return {
-        success: false,
-        error: error.message || 'Failed to send email via Mailgun'
       };
     }
   }
@@ -399,7 +180,7 @@ export class EmailService {
 
       return {
         success: true,
-        messageId: `console-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+        messageId: `console-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
       };
     } catch (error: any) {
       console.error('Console email sending error:', error);
@@ -434,8 +215,7 @@ export class EmailService {
   }
 
   /**
-   * Send a test email to verify SendGrid configuration
-   * Use your own email address for testing
+   * Send a test email to verify configuration
    */
   async sendTestEmail(recipientEmail: string): Promise<EmailSendResult> {
     try {
@@ -448,7 +228,7 @@ export class EmailService {
         recipientEmail,
         testUrl,
         testExpiration,
-        'SendGrid Test'
+        'Email Test'
       );
 
       if (result.success) {
@@ -473,15 +253,12 @@ export class EmailService {
  * Create email service instance based on environment configuration
  */
 export const createEmailService = (): EmailService => {
-  // In a real application, these would come from environment variables
   const provider = (import.meta.env.VITE_EMAIL_PROVIDER as EmailServiceConfig['provider']) || 'console';
-  const apiKey = import.meta.env.VITE_EMAIL_API_KEY;
-  const fromEmail = import.meta.env.VITE_EMAIL_FROM || 'noreply@cabin.family';
-  const fromName = import.meta.env.VITE_EMAIL_FROM_NAME || 'Cabin Management Team';
+  const fromEmail = import.meta.env.VITE_EMAIL_FROM || 'noreply@zieglercabin.com';
+  const fromName = import.meta.env.VITE_EMAIL_FROM_NAME || 'Ziegler Family Cabin';
 
   return new EmailService({
     provider,
-    apiKey,
     fromEmail,
     fromName
   });
