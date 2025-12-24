@@ -14,7 +14,7 @@ export interface EmailTemplateData {
  * Generate HTML email template for invitation
  */
 export const generateInvitationEmailHTML = (data: EmailTemplateData): string => {
-  const { recipientEmail, invitationUrl, expiresAt, senderName = 'Cabin Management Team' } = data;
+  const { recipientEmail, invitationUrl, expiresAt } = data;
   
   return `
 <!DOCTYPE html>
