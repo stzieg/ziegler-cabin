@@ -10,15 +10,14 @@ interface WeatherTabProps {
 
 /**
  * WeatherTab component - Full weather display with extended forecast
- * Shows current conditions and 5-day forecast for Pickerel, Wisconsin
- * Note: 10-day forecasts require premium weather API access
+ * Shows current conditions and 8-day forecast for Pickerel, Wisconsin
  */
 export const WeatherTab: React.FC<WeatherTabProps> = () => {
   return (
     <div className={styles.weatherTab}>
       <div className={styles.header}>
         <h1>Weather Forecast</h1>
-        <p>Current conditions and 5-day forecast for Pickerel, Wisconsin</p>
+        <p>Current conditions and 8-day forecast for Pickerel, Wisconsin</p>
       </div>
       
       <div className={styles.weatherContent}>

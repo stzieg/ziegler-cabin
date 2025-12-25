@@ -1,6 +1,7 @@
 /**
  * Weather Service for Pickerel, Wisconsin
- * Integrates with OpenWeather API to provide current weather and forecast data
+ * Uses OpenWeather One Call API 3.0 for extended forecasts (8 days)
+ * Implements aggressive caching to stay within 1000 calls/day limit
  */
 
 export interface WeatherData {
@@ -11,18 +12,24 @@ export interface WeatherData {
     description: string;
     icon: string;
     windSpeed: number;
+    windGust?: number;
     windDirection: number;
     pressure: number;
     visibility: number;
     uvIndex: number;
+    dewPoint: number;
+    clouds: number;
+    sunrise: string;
+    sunset: string;
   };
   forecast: WeatherForecast[];
   hourlyForecast: HourlyForecast[];
+  alerts: WeatherAlert[];
   location: {
     name: string;
-    country: string;
     lat: number;
     lon: number;
+    timezone: string;
   };
   lastUpdated: string;
 }
@@ -32,26 +39,58 @@ export interface WeatherForecast {
   temperature: {
     min: number;
     max: number;
+    morn: number;
+    day: number;
+    eve: number;
+    night: number;
+  };
+  feelsLike: {
+    morn: number;
+    day: number;
+    eve: number;
+    night: number;
   };
   description: string;
   icon: string;
   humidity: number;
   windSpeed: number;
+  windGust?: number;
+  windDirection: number;
   precipitation: number;
-  hourlyData?: HourlyForecast[]; // Hourly data for this day
+  precipitationProbability: number;
+  uvIndex: number;
+  clouds: number;
+  sunrise: string;
+  sunset: string;
+  moonPhase: number;
+  summary?: string;
 }
 
 export interface HourlyForecast {
-  time: string; // ISO string
+  time: string;
   temperature: number;
   feelsLike: number;
   description: string;
   icon: string;
   humidity: number;
   windSpeed: number;
+  windGust?: number;
   windDirection: number;
   precipitation: number;
   precipitationProbability: number;
+  uvIndex: number;
+  clouds: number;
+  visibility: number;
+  dewPoint: number;
+}
+
+export interface WeatherAlert {
+  senderName: string;
+  event: string;
+  start: string;
+  end: string;
+  description: string;
+  tags: string[];
 }
 
 export interface WeatherError {
@@ -62,20 +101,29 @@ export interface WeatherError {
 // Pickerel, Wisconsin coordinates
 const PICKEREL_COORDS = {
   lat: 45.359444,
-  lon: -88.910833
+  lon: -88.910833,
+  name: 'Pickerel, WI'
 };
+
+// Cache keys for localStorage persistence
+const CACHE_KEY = 'weather_cache_v2';
+const CACHE_TIMESTAMP_KEY = 'weather_cache_timestamp_v2';
 
 class WeatherService {
   private apiKey: string;
-  private baseUrl = 'https://api.openweathermap.org/data/2.5';
-  private cache: Map<string, { data: any; timestamp: number }> = new Map();
-  private cacheTimeout = 10 * 60 * 1000; // 10 minutes
+  private baseUrl = 'https://api.openweathermap.org/data/3.0';
+  private memoryCache: WeatherData | null = null;
+  private memoryCacheTimestamp: number = 0;
+  // Cache for 30 minutes to be efficient with API calls (48 calls/day max)
+  private cacheTimeout = 30 * 60 * 1000;
 
   constructor() {
     this.apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
     if (!this.apiKey) {
       console.warn('OpenWeather API key not found. Weather features will be disabled.');
     }
+    // Load from localStorage on init
+    this.loadFromLocalStorage();
   }
 
   /**
@@ -86,82 +134,208 @@ class WeatherService {
   }
 
   /**
-   * Get current weather data for Pickerel, Wisconsin
+   * Load cached data from localStorage
+   */
+  private loadFromLocalStorage(): void {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      const timestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+      if (cached && timestamp) {
+        this.memoryCache = JSON.parse(cached);
+        this.memoryCacheTimestamp = parseInt(timestamp, 10);
+      }
+    } catch (e) {
+      console.warn('Failed to load weather cache from localStorage');
+    }
+  }
+
+  /**
+   * Save data to localStorage for persistence across page reloads
+   */
+  private saveToLocalStorage(data: WeatherData): void {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+    } catch (e) {
+      console.warn('Failed to save weather cache to localStorage');
+    }
+  }
+
+  /**
+   * Check if cache is still valid
+   */
+  private isCacheValid(): boolean {
+    return this.memoryCache !== null && 
+           (Date.now() - this.memoryCacheTimestamp) < this.cacheTimeout;
+  }
+
+  /**
+   * Get current weather and forecast data using One Call API 3.0
    */
   async getCurrentWeather(): Promise<WeatherData> {
     if (!this.isAvailable()) {
       throw new Error('Weather service is not available. Please check your API key configuration.');
     }
 
-    const cacheKey = 'current-weather';
-    const cached = this.getCachedData(cacheKey);
-    if (cached) {
-      return cached;
+    // Return cached data if valid
+    if (this.isCacheValid() && this.memoryCache) {
+      return this.memoryCache;
     }
 
     try {
-      const [currentResponse, forecastResponse] = await Promise.all([
-        fetch(
-          `${this.baseUrl}/weather?lat=${PICKEREL_COORDS.lat}&lon=${PICKEREL_COORDS.lon}&appid=${this.apiKey}&units=imperial`
-        ),
-        fetch(
-          `${this.baseUrl}/forecast?lat=${PICKEREL_COORDS.lat}&lon=${PICKEREL_COORDS.lon}&appid=${this.apiKey}&units=imperial`
-        )
-      ]);
+      // One Call API 3.0 - single call gets everything
+      const response = await fetch(
+        `${this.baseUrl}/onecall?lat=${PICKEREL_COORDS.lat}&lon=${PICKEREL_COORDS.lon}&appid=${this.apiKey}&units=imperial&exclude=minutely`
+      );
 
-      if (!currentResponse.ok) {
-        throw new Error(`Weather API error: ${currentResponse.status} ${currentResponse.statusText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Weather API error:', response.status, errorText);
+        throw new Error(`Weather API error: ${response.status} ${response.statusText}`);
       }
 
-      if (!forecastResponse.ok) {
-        throw new Error(`Forecast API error: ${forecastResponse.status} ${forecastResponse.statusText}`);
-      }
+      const data = await response.json();
+      const weatherData = this.processOneCallData(data);
 
-      const currentData = await currentResponse.json();
-      const forecastData = await forecastResponse.json();
+      // Update cache
+      this.memoryCache = weatherData;
+      this.memoryCacheTimestamp = Date.now();
+      this.saveToLocalStorage(weatherData);
 
-      const weatherData: WeatherData = {
-        current: {
-          temperature: Math.round(currentData.main.temp),
-          feelsLike: Math.round(currentData.main.feels_like),
-          humidity: currentData.main.humidity,
-          description: this.capitalizeWords(currentData.weather[0].description),
-          icon: currentData.weather[0].icon,
-          windSpeed: Math.round(currentData.wind.speed),
-          windDirection: currentData.wind.deg,
-          pressure: currentData.main.pressure,
-          visibility: Math.round(currentData.visibility / 1609.34), // Convert meters to miles
-          uvIndex: 0 // Will be populated by UV index API if needed
-        },
-        forecast: this.processForecastData(forecastData.list),
-        hourlyForecast: this.processHourlyForecastData(forecastData.list),
-        location: {
-          name: currentData.name,
-          country: currentData.sys.country,
-          lat: currentData.coord.lat,
-          lon: currentData.coord.lon
-        },
-        lastUpdated: new Date().toISOString()
-      };
-
-      this.setCachedData(cacheKey, weatherData);
       return weatherData;
 
     } catch (error: any) {
       console.error('Weather service error:', error);
+      
+      // Return stale cache if available
+      if (this.memoryCache) {
+        console.warn('Returning stale weather cache due to API error');
+        return this.memoryCache;
+      }
+      
       throw new Error(`Failed to fetch weather data: ${error.message}`);
     }
+  }
+
+  /**
+   * Process One Call API 3.0 response
+   */
+  private processOneCallData(data: any): WeatherData {
+    const current = data.current;
+    const daily = data.daily || [];
+    const hourly = data.hourly || [];
+    const alerts = data.alerts || [];
+
+    return {
+      current: {
+        temperature: Math.round(current.temp),
+        feelsLike: Math.round(current.feels_like),
+        humidity: current.humidity,
+        description: this.capitalizeWords(current.weather[0].description),
+        icon: current.weather[0].icon,
+        windSpeed: Math.round(current.wind_speed),
+        windGust: current.wind_gust ? Math.round(current.wind_gust) : undefined,
+        windDirection: current.wind_deg,
+        pressure: current.pressure,
+        visibility: Math.round((current.visibility || 10000) / 1609.34),
+        uvIndex: Math.round(current.uvi),
+        dewPoint: Math.round(current.dew_point),
+        clouds: current.clouds,
+        sunrise: new Date(current.sunrise * 1000).toISOString(),
+        sunset: new Date(current.sunset * 1000).toISOString(),
+      },
+      forecast: daily.map((day: any) => this.processDailyForecast(day)),
+      hourlyForecast: hourly.slice(0, 48).map((hour: any) => this.processHourlyForecast(hour)),
+      alerts: alerts.map((alert: any) => ({
+        senderName: alert.sender_name,
+        event: alert.event,
+        start: new Date(alert.start * 1000).toISOString(),
+        end: new Date(alert.end * 1000).toISOString(),
+        description: alert.description,
+        tags: alert.tags || [],
+      })),
+      location: {
+        name: PICKEREL_COORDS.name,
+        lat: data.lat,
+        lon: data.lon,
+        timezone: data.timezone,
+      },
+      lastUpdated: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Process daily forecast data
+   */
+  private processDailyForecast(day: any): WeatherForecast {
+    return {
+      date: new Date(day.dt * 1000).toISOString().split('T')[0],
+      temperature: {
+        min: Math.round(day.temp.min),
+        max: Math.round(day.temp.max),
+        morn: Math.round(day.temp.morn),
+        day: Math.round(day.temp.day),
+        eve: Math.round(day.temp.eve),
+        night: Math.round(day.temp.night),
+      },
+      feelsLike: {
+        morn: Math.round(day.feels_like.morn),
+        day: Math.round(day.feels_like.day),
+        eve: Math.round(day.feels_like.eve),
+        night: Math.round(day.feels_like.night),
+      },
+      description: this.capitalizeWords(day.weather[0].description),
+      icon: day.weather[0].icon,
+      humidity: day.humidity,
+      windSpeed: Math.round(day.wind_speed),
+      windGust: day.wind_gust ? Math.round(day.wind_gust) : undefined,
+      windDirection: day.wind_deg,
+      precipitation: (day.rain || 0) + (day.snow || 0),
+      precipitationProbability: Math.round((day.pop || 0) * 100),
+      uvIndex: Math.round(day.uvi),
+      clouds: day.clouds,
+      sunrise: new Date(day.sunrise * 1000).toISOString(),
+      sunset: new Date(day.sunset * 1000).toISOString(),
+      moonPhase: day.moon_phase,
+      summary: day.summary,
+    };
+  }
+
+  /**
+   * Process hourly forecast data
+   */
+  private processHourlyForecast(hour: any): HourlyForecast {
+    return {
+      time: new Date(hour.dt * 1000).toISOString(),
+      temperature: Math.round(hour.temp),
+      feelsLike: Math.round(hour.feels_like),
+      description: this.capitalizeWords(hour.weather[0].description),
+      icon: hour.weather[0].icon,
+      humidity: hour.humidity,
+      windSpeed: Math.round(hour.wind_speed),
+      windGust: hour.wind_gust ? Math.round(hour.wind_gust) : undefined,
+      windDirection: hour.wind_deg,
+      precipitation: (hour.rain?.['1h'] || 0) + (hour.snow?.['1h'] || 0),
+      precipitationProbability: Math.round((hour.pop || 0) * 100),
+      uvIndex: Math.round(hour.uvi),
+      clouds: hour.clouds,
+      visibility: Math.round((hour.visibility || 10000) / 1609.34),
+      dewPoint: Math.round(hour.dew_point),
+    };
   }
 
   /**
    * Clear the weather cache to force fresh data
    */
   clearCache(): void {
-    this.cache.clear();
+    this.memoryCache = null;
+    this.memoryCacheTimestamp = 0;
+    localStorage.removeItem(CACHE_KEY);
+    localStorage.removeItem(CACHE_TIMESTAMP_KEY);
   }
 
   /**
-   * Get weather forecast for the next 5 days
+   * Get weather forecast for the next 8 days
    */
   async getForecast(): Promise<WeatherForecast[]> {
     const weatherData = await this.getCurrentWeather();
@@ -169,7 +343,7 @@ class WeatherService {
   }
 
   /**
-   * Get hourly forecast for the next 5 days (3-hour intervals)
+   * Get hourly forecast for the next 48 hours
    */
   async getHourlyForecast(): Promise<HourlyForecast[]> {
     const weatherData = await this.getCurrentWeather();
@@ -177,97 +351,27 @@ class WeatherService {
   }
 
   /**
-   * Get today's hourly forecast
+   * Get weather alerts
    */
-  async getTodayHourlyForecast(): Promise<HourlyForecast[]> {
+  async getAlerts(): Promise<WeatherAlert[]> {
     const weatherData = await this.getCurrentWeather();
-    const today = new Date().toISOString().split('T')[0];
-    return weatherData.hourlyForecast.filter(hour => 
-      hour.time.startsWith(today)
-    );
+    return weatherData.alerts;
   }
 
   /**
-   * Process forecast data from OpenWeather API
+   * Get forecast for a specific date
    */
-  private processForecastData(forecastList: any[]): WeatherForecast[] {
-    const dailyForecasts: Map<string, WeatherForecast> = new Map();
-    const hourlyByDay: Map<string, HourlyForecast[]> = new Map();
-    
-    // Get today's date in local timezone (YYYY-MM-DD format)
-    const today = new Date().toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD format
-
-    // First, process all hourly data and group by day
-    const hourlyData = this.processHourlyForecastData(forecastList);
-    hourlyData.forEach((hourly) => {
-      // Extract date from ISO string, but convert to local date
-      const hourDate = new Date(hourly.time);
-      const dateKey = hourDate.toLocaleDateString('en-CA');
-      if (!hourlyByDay.has(dateKey)) {
-        hourlyByDay.set(dateKey, []);
-      }
-      hourlyByDay.get(dateKey)!.push(hourly);
-    });
-
-    forecastList.forEach((item) => {
-      // Convert Unix timestamp to local date
-      const date = new Date(item.dt * 1000);
-      const dateKey = date.toLocaleDateString('en-CA'); // Local date in YYYY-MM-DD format
-
-      if (!dailyForecasts.has(dateKey)) {
-        dailyForecasts.set(dateKey, {
-          date: dateKey,
-          temperature: {
-            min: Math.round(item.main.temp_min),
-            max: Math.round(item.main.temp_max)
-          },
-          description: this.capitalizeWords(item.weather[0].description),
-          icon: item.weather[0].icon,
-          humidity: item.main.humidity,
-          windSpeed: Math.round(item.wind.speed),
-          precipitation: item.rain ? item.rain['3h'] || 0 : 0,
-          hourlyData: hourlyByDay.get(dateKey) || []
-        });
-      } else {
-        // Update min/max temperatures
-        const existing = dailyForecasts.get(dateKey)!;
-        existing.temperature.min = Math.min(existing.temperature.min, Math.round(item.main.temp_min));
-        existing.temperature.max = Math.max(existing.temperature.max, Math.round(item.main.temp_max));
-      }
-    });
-
-    // Convert to array, filter out today, and sort by date
-    const futureForecasts = Array.from(dailyForecasts.values())
-      .filter(forecast => forecast.date > today) // Always exclude today
-      .sort((a, b) => a.date.localeCompare(b.date));
-
-    // Return the next 5 days starting from tomorrow
-    return futureForecasts.slice(0, 5);
-  }
-
-  /**
-   * Process hourly forecast data from OpenWeather API
-   */
-  private processHourlyForecastData(forecastList: any[]): HourlyForecast[] {
-    return forecastList.slice(0, 40).map((item) => ({ // Next 5 days (40 x 3-hour intervals)
-      time: new Date(item.dt * 1000).toISOString(),
-      temperature: Math.round(item.main.temp),
-      feelsLike: Math.round(item.main.feels_like),
-      description: this.capitalizeWords(item.weather[0].description),
-      icon: item.weather[0].icon,
-      humidity: item.main.humidity,
-      windSpeed: Math.round(item.wind.speed),
-      windDirection: item.wind.deg || 0,
-      precipitation: item.rain ? item.rain['3h'] || 0 : (item.snow ? item.snow['3h'] || 0 : 0),
-      precipitationProbability: Math.round((item.pop || 0) * 100)
-    }));
+  async getForecastForDate(date: string): Promise<WeatherForecast | undefined> {
+    const weatherData = await this.getCurrentWeather();
+    return weatherData.forecast.find(f => f.date === date);
   }
 
   /**
    * Get weather icon URL
    */
-  getIconUrl(iconCode: string): string {
-    return `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+  getIconUrl(iconCode: string, size: '1x' | '2x' | '4x' = '2x'): string {
+    const sizeMap = { '1x': '', '2x': '@2x', '4x': '@4x' };
+    return `https://openweathermap.org/img/wn/${iconCode}${sizeMap[size]}.png`;
   }
 
   /**
@@ -287,39 +391,32 @@ class WeatherService {
   }
 
   /**
+   * Get moon phase name
+   */
+  getMoonPhaseName(phase: number): string {
+    if (phase === 0 || phase === 1) return 'New Moon';
+    if (phase < 0.25) return 'Waxing Crescent';
+    if (phase === 0.25) return 'First Quarter';
+    if (phase < 0.5) return 'Waxing Gibbous';
+    if (phase === 0.5) return 'Full Moon';
+    if (phase < 0.75) return 'Waning Gibbous';
+    if (phase === 0.75) return 'Last Quarter';
+    return 'Waning Crescent';
+  }
+
+  /**
    * Check if it's a good day for cabin activities
    */
-  isGoodWeatherForOutdoorActivities(weather: WeatherData): boolean {
-    const temp = weather.current.temperature;
-    const description = weather.current.description.toLowerCase();
+  isGoodWeatherForOutdoorActivities(forecast: WeatherForecast): boolean {
+    const temp = forecast.temperature.day;
+    const description = forecast.description.toLowerCase();
+    const precip = forecast.precipitationProbability;
     
-    // Good weather: 50-85°F, no severe weather
-    return temp >= 50 && 
+    return temp >= 45 && 
            temp <= 85 && 
+           precip < 40 &&
            !description.includes('storm') && 
-           !description.includes('heavy rain') &&
-           !description.includes('snow');
-  }
-
-  /**
-   * Get cached data if still valid
-   */
-  private getCachedData(key: string): any {
-    const cached = this.cache.get(key);
-    if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
-      return cached.data;
-    }
-    return null;
-  }
-
-  /**
-   * Cache data with timestamp
-   */
-  private setCachedData(key: string, data: any): void {
-    this.cache.set(key, {
-      data,
-      timestamp: Date.now()
-    });
+           !description.includes('heavy');
   }
 
   /**

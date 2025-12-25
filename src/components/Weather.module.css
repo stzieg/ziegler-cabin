@@ -423,3 +423,292 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+
+/* Weather Alerts */
+.alerts {
+  margin-bottom: 1rem;
+}
+
+.alert {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.alertIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.alertContent {
+  flex: 1;
+}
+
+.alertContent strong {
+  display: block;
+  color: #856404;
+  margin-bottom: 0.25rem;
+}
+
+.alertContent p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #856404;
+  line-height: 1.4;
+}
+
+/* Selected Day Styling */
+.forecastDay.selected {
+  background: rgba(45, 80, 22, 0.1);
+  border: 2px solid var(--color-forest-green, #2d5016);
+}
+
+.forecastPrecip {
+  font-size: 0.75rem;
+  color: #4a90e2;
+  margin-top: 0.25rem;
+}
+
+/* Day Details Panel */
+.dayDetails {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: rgba(45, 80, 22, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(45, 80, 22, 0.1);
+}
+
+.dayDetails h5 {
+  margin: 0 0 1rem 0;
+  color: #2d5016;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dayDetailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dayDetailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dayDetailItem .label {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.dayDetailItem .value {
+  font-size: 0.9rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* Temperature Breakdown */
+.tempBreakdown {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(45, 80, 22, 0.1);
+}
+
+.tempBreakdown h6 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  color: #34495e;
+  font-weight: 500;
+}
+
+.tempGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.tempItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.tempItem span:first-child {
+  font-size: 0.75rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.tempItem span:last-child {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Day Summary */
+.daySummary {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #34495e;
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .dayDetailsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .tempGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* Frost Warning */
+.frostWarning {
+  background: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.frostWarning span {
+  font-weight: 600;
+  color: #1565c0;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.frostWarning p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #1976d2;
+}
+
+/* Snow Info */
+.snowInfo {
+  background: #f3e5f5;
+  border: 1px solid #9c27b0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.snowInfo span {
+  font-weight: 500;
+  color: #7b1fa2;
+}
+
+/* Activity Conditions */
+.activityConditions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(45, 80, 22, 0.1);
+}
+
+.activityConditions h6 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  color: #34495e;
+  font-weight: 500;
+}
+
+.activityGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.activityItem {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.activityIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.activityInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.activityName {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #2c3e50;
+}
+
+.activityRating {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.ratingExcellent {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.ratingGood {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.ratingFair {
+  background: #fff8e1;
+  color: #f57c00;
+}
+
+.ratingLimited {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.ratingPoor {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.activityReason {
+  font-size: 0.75rem;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 600px) {
+  .activityGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .activityReason {
+    white-space: normal;
+  }
+}
