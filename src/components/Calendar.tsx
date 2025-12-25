@@ -666,8 +666,8 @@ export const Calendar: React.FC<CalendarProps> = ({
               {editingReservation ? 'Edit Reservation' : 'New Reservation'}
             </h3>
             
-            {/* Show reservation owner info if viewing someone else's reservation (non-admin) */}
-            {editingReservation && editingReservation.user_id !== user.id && !isAdmin && (
+            {/* Show reservation owner info if viewing someone else's reservation */}
+            {editingReservation && editingReservation.user_id !== user.id && (
               <div className={styles.ownerInfo}>
                 <p>
                   This reservation belongs to{' '}
