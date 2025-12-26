@@ -17,7 +17,7 @@ interface CalendarTabProps {
 /**
  * Calendar Tab Content - Internal component that uses ViewState
  */
-const CalendarTabContent: React.FC<CalendarTabProps> = ({ user, formState, isAdmin }) => {
+const CalendarTabContent: React.FC<CalendarTabProps> = ({ user, isAdmin }) => {
   const [notifications, setNotifications] = useState<string[]>([]);
   const { navigateToCalendar, clearReservationState, viewState, reservationState } = useViewState();
 
