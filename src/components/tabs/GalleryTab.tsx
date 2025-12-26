@@ -61,12 +61,6 @@ interface GalleryTabProps {
   isAdmin?: boolean;
 }
 
-interface PhotoUploadData {
-  caption: string;
-  tags: string;
-  album_id?: string;
-}
-
 /**
  * Gallery Tab Component - Photo gallery with upload and organization
  * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 6.3
@@ -76,13 +70,9 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showUploadForm, setShowUploadForm] = useState(false);
-  const [uploadData, setUploadData] = useState<PhotoUploadData>({
-    caption: '',
-    tags: '',
-    album_id: undefined
-  });
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [filterAlbum, setFilterAlbum] = useState<string>('');
   const [deleting, setDeleting] = useState(false);
@@ -134,124 +124,109 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
   }, []);
 
   /**
-   * Handle photo upload with image compression
+   * Handle photo upload with image compression (supports bulk upload)
    * Requirements: 4.2 - Photo upload with metadata capture
    */
   const handlePhotoUpload = async (event: React.FormEvent) => {
     event.preventDefault();
     
-    if (!selectedFile) {
-      setError('Please select a file to upload.');
+    if (selectedFiles.length === 0) {
+      setError('Please select at least one file to upload.');
       return;
     }
 
     try {
       setUploading(true);
       setError(null);
+      setUploadProgress({ current: 0, total: selectedFiles.length });
 
-      // Compress image before upload for better performance
-      const compressedFile = await compressImage(selectedFile);
-      const fileToUpload = compressedFile || selectedFile;
+      const errors: string[] = [];
 
-      // Create unique filename
-      const fileExt = selectedFile.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        setUploadProgress({ current: i + 1, total: selectedFiles.length });
 
-      // Upload file to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('photos')
-        .upload(fileName, fileToUpload, {
-          cacheControl: '31536000', // Cache for 1 year
-          upsert: false
-        });
-
-      if (uploadError) {
-        console.error('Storage upload error:', uploadError);
-        
-        if (uploadError.message.includes('Bucket not found')) {
-          throw new Error('Photo storage bucket not found. Please contact support to set up photo storage.');
-        } else if (uploadError.message.includes('File size')) {
-          throw new Error('File is too large. Please select a file smaller than 10MB.');
-        } else if (uploadError.message.includes('File type')) {
-          throw new Error('Invalid file type. Please select a valid image file (JPEG, PNG, GIF, or WebP).');
-        } else {
-          throw new Error(`Upload failed: ${uploadError.message}`);
-        }
-      }
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('photos')
-        .getPublicUrl(fileName);
-
-      if (!publicUrl) {
-        throw new Error('Failed to generate public URL for uploaded photo.');
-      }
-
-      // Extract basic metadata (skip heavy EXIF parsing)
-      const metadata: PhotoMetadata = {
-        size: fileToUpload.size,
-        format: selectedFile.type.split('/')[1] || 'unknown'
-      };
-
-      // Parse tags from form data
-      const tags = uploadData.tags
-        .split(',')
-        .map(tag => tag.trim())
-        .filter(tag => tag.length > 0);
-
-      // Save photo record to database
-      const { error: dbError } = await supabase
-        .from('photos')
-        .insert({
-          user_id: user.id,
-          filename: selectedFile.name,
-          url: publicUrl,
-          caption: uploadData.caption || null,
-          tags,
-          album_id: uploadData.album_id || null,
-          metadata
-        });
-
-      if (dbError) {
-        console.error('Database insert error:', dbError);
-        
         try {
-          await supabase.storage.from('photos').remove([fileName]);
-        } catch (cleanupError) {
-          console.warn('Could not clean up uploaded file after database error:', cleanupError);
-        }
-        
-        if (dbError.message.includes('photos_pkey')) {
-          throw new Error('A photo with this name already exists. Please rename your file and try again.');
-        } else if (dbError.message.includes('foreign key')) {
-          throw new Error('User authentication error. Please log out and log back in.');
-        } else {
-          throw new Error(`Database error: ${dbError.message}`);
+          // Compress image before upload for better performance
+          const compressedFile = await compressImage(file);
+          const fileToUpload = compressedFile || file;
+
+          // Create unique filename
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${user.id}/${Date.now()}-${i}.${fileExt}`;
+
+          // Upload file to Supabase Storage
+          const { error: uploadError } = await supabase.storage
+            .from('photos')
+            .upload(fileName, fileToUpload, {
+              cacheControl: '31536000',
+              upsert: false
+            });
+
+          if (uploadError) {
+            errors.push(`${file.name}: ${uploadError.message}`);
+            continue;
+          }
+
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('photos')
+            .getPublicUrl(fileName);
+
+          if (!publicUrl) {
+            errors.push(`${file.name}: Failed to generate URL`);
+            continue;
+          }
+
+          // Extract basic metadata
+          const metadata: PhotoMetadata = {
+            size: fileToUpload.size,
+            format: file.type.split('/')[1] || 'unknown'
+          };
+
+          // Save photo record to database
+          const { error: dbError } = await supabase
+            .from('photos')
+            .insert({
+              user_id: user.id,
+              filename: file.name,
+              url: publicUrl,
+              caption: null,
+              tags: [],
+              album_id: null,
+              metadata
+            });
+
+          if (dbError) {
+            // Try to clean up the uploaded file
+            await supabase.storage.from('photos').remove([fileName]);
+            errors.push(`${file.name}: ${dbError.message}`);
+          }
+        } catch (err) {
+          errors.push(`${file.name}: ${err instanceof Error ? err.message : 'Unknown error'}`);
         }
       }
 
-      // Reset form and reload photos
-      setUploadData({ caption: '', tags: '', album_id: undefined });
-      setSelectedFile(null);
+      // Reset form
+      setSelectedFiles([]);
       setShowUploadForm(false);
+      setUploadProgress(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
       
       await loadPhotos();
-      setError(null);
+
+      if (errors.length > 0) {
+        setError(`Some uploads failed:\n${errors.join('\n')}`);
+      }
       
     } catch (err) {
-      console.error('Error uploading photo:', err);
-      
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred while uploading the photo. Please try again.');
-      }
+      console.error('Error uploading photos:', err);
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     } finally {
       setUploading(false);
+      setUploadProgress(null);
     }
   };
 
@@ -377,26 +352,34 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
   };
 
   /**
-   * Handle file selection
+   * Handle file selection (supports multiple files)
    */
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    const validFiles: File[] = [];
+    const errors: string[] = [];
+
+    Array.from(files).forEach(file => {
       if (!file.type.startsWith('image/')) {
-        setError('Please select an image file.');
+        errors.push(`${file.name}: Not an image file`);
         return;
       }
-
-      // Validate file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
-        setError('File size must be less than 10MB.');
+        errors.push(`${file.name}: File too large (max 10MB)`);
         return;
       }
+      validFiles.push(file);
+    });
 
-      setSelectedFile(file);
+    if (errors.length > 0) {
+      setError(errors.join('\n'));
+    } else {
       setError(null);
     }
+
+    setSelectedFiles(validFiles);
   };
 
   /**
@@ -442,9 +425,6 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
   // Restore form state if provided
   useEffect(() => {
     if (formState) {
-      if (formState.caption) setUploadData(prev => ({ ...prev, caption: formState.caption }));
-      if (formState.tags) setUploadData(prev => ({ ...prev, tags: formState.tags }));
-      if (formState.album_id) setUploadData(prev => ({ ...prev, album_id: formState.album_id }));
       if (formState.showUploadForm) setShowUploadForm(formState.showUploadForm);
     }
   }, [formState]);
@@ -594,32 +574,52 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
         <div className={styles.modal}>
           <div className={styles.modalContent}>
             <form onSubmit={handlePhotoUpload} data-testid="upload-form">
-              <h3>Upload Photo</h3>
+              <h3>Upload Photos</h3>
               
               <div className={styles.formGroup}>
-                <label htmlFor="file">Select Photo:</label>
+                <label htmlFor="file">Select Photos (multiple allowed):</label>
                 <input
                   ref={fileInputRef}
                   type="file"
                   id="file"
                   accept="image/*"
+                  multiple
                   onChange={handleFileSelect}
                   required
                 />
-                {selectedFile && (
-                  <p className={styles.fileInfo}>
-                    Selected: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
-                  </p>
+                {selectedFiles.length > 0 && (
+                  <div className={styles.fileList}>
+                    <p className={styles.fileCount}>{selectedFiles.length} file(s) selected</p>
+                    <ul className={styles.fileNames}>
+                      {selectedFiles.slice(0, 5).map((file, i) => (
+                        <li key={i}>{file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)</li>
+                      ))}
+                      {selectedFiles.length > 5 && (
+                        <li>...and {selectedFiles.length - 5} more</li>
+                      )}
+                    </ul>
+                  </div>
                 )}
               </div>
+
+              {uploadProgress && (
+                <div className={styles.uploadProgress}>
+                  <div className={styles.progressBar}>
+                    <div 
+                      className={styles.progressFill} 
+                      style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+                    />
+                  </div>
+                  <p>Uploading {uploadProgress.current} of {uploadProgress.total}...</p>
+                </div>
+              )}
 
               <div className={styles.formActions}>
                 <button
                   type="button"
                   onClick={() => {
                     setShowUploadForm(false);
-                    setSelectedFile(null);
-                    setUploadData({ caption: '', tags: '', album_id: undefined });
+                    setSelectedFiles([]);
                     if (fileInputRef.current) {
                       fileInputRef.current.value = '';
                     }
@@ -630,9 +630,9 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
                 </button>
                 <button
                   type="submit"
-                  disabled={!selectedFile || uploading}
+                  disabled={selectedFiles.length === 0 || uploading}
                 >
-                  {uploading ? 'Uploading...' : 'Upload'}
+                  {uploading ? 'Uploading...' : `Upload ${selectedFiles.length || ''} Photo${selectedFiles.length !== 1 ? 's' : ''}`}
                 </button>
               </div>
             </form>

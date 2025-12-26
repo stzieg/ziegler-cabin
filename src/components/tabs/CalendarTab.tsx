@@ -165,13 +165,6 @@ const CalendarTabContent: React.FC<CalendarTabProps> = ({ user, formState, isAdm
           </div>
         )}
 
-        {/* Form state restoration indicator */}
-        {formState && Object.keys(formState).length > 0 && (
-          <div className={styles.formStateIndicator}>
-            <strong>Form state restored</strong> - Your previous form data has been preserved.
-          </div>
-        )}
-
         {/* Main Calendar Component */}
         <div className={styles.calendarContainer}>
           <Calendar

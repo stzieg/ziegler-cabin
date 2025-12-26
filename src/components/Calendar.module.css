@@ -505,7 +505,17 @@
   }
 
   .dayWeather {
-    display: none; /* Hide weather on mobile to save space */
+    display: flex;
+    gap: 1px;
+  }
+
+  .weatherIcon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .weatherTemp {
+    font-size: 0.5rem;
   }
 
   .reservationIndicator {
@@ -522,18 +532,24 @@
     margin-bottom: 0.05rem;
   }
   
-  /* Modal improvements for mobile */
+  /* Modal improvements for mobile - full screen for better UX */
   .modal {
-    padding: 0.75rem;
-    align-items: flex-start;
-    padding-top: 10vh;
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
   }
   
   .modalContent {
     padding: 1.25rem;
+    padding-top: 1rem;
+    padding-bottom: 2rem;
     max-width: 100%;
     width: 100%;
-    border-radius: 12px;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   .modalContent h3 {

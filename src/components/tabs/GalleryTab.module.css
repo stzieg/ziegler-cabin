@@ -198,6 +198,57 @@
   color: var(--color-text-secondary, #718096);
 }
 
+.fileList {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: var(--color-gray-50, #f7fafc);
+  border-radius: 6px;
+}
+
+.fileCount {
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+  color: var(--color-forest-green);
+}
+
+.fileNames {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #718096);
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.fileNames li {
+  margin-bottom: 0.25rem;
+}
+
+.uploadProgress {
+  margin: 1rem 0;
+}
+
+.progressBar {
+  height: 8px;
+  background: var(--color-gray-200, #edf2f7);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-forest-green);
+  transition: width 0.3s ease;
+}
+
+.uploadProgress p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #718096);
+  text-align: center;
+}
+
 .formActions {
   display: flex;
   gap: 1rem;
