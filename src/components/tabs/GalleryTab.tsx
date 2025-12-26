@@ -683,24 +683,25 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
           data-testid="full-screen-photo-viewer"
         >
           <div className={styles.fullScreenBackground} />
+          {/* Close button outside content for better mobile touch */}
+          <button
+            className={styles.fullScreenCloseButton}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setSelectedPhoto(null);
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setSelectedPhoto(null);
+            }}
+            aria-label="Close full-screen photo viewer"
+            type="button"
+          >
+            ✕
+          </button>
           <div className={styles.fullScreenContent} onClick={(e) => e.stopPropagation()}>
-            <button
-              className={styles.fullScreenCloseButton}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setSelectedPhoto(null);
-              }}
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setSelectedPhoto(null);
-              }}
-              aria-label="Close full-screen photo viewer"
-              type="button"
-            >
-              ✕
-            </button>
             
             {/* Navigation Arrows */}
             {filteredPhotos.length > 1 && (
