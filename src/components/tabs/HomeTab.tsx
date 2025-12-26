@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { useAuth } from '../../contexts/SupabaseProvider';
+import { InvitationForm } from '../InvitationForm';
 import type { TabType } from '../FullScreenDashboard';
+import type { Invitation } from '../../types/supabase';
 import styles from './HomeTab.module.css';
 
 interface HomeTabProps {
@@ -55,6 +57,21 @@ const ImportantInfoIcon = () => (
   </svg>
 );
 
+const MessageBoardIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+);
+
+const InviteIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+    <circle cx="8.5" cy="7" r="4"/>
+    <line x1="20" y1="8" x2="20" y2="14"/>
+    <line x1="23" y1="11" x2="17" y2="11"/>
+  </svg>
+);
+
 /**
  * Get time-based greeting
  */
@@ -68,17 +85,26 @@ const getGreeting = (): string => {
 /**
  * HomeTab component - Welcome page for the cabin dashboard
  */
-export const HomeTab: React.FC<HomeTabProps> = ({ onTabChange }) => {
+export const HomeTab: React.FC<HomeTabProps> = ({ user, onTabChange }) => {
   const { profile } = useAuth();
+  const [showInviteModal, setShowInviteModal] = useState(false);
   
   const firstName = profile?.first_name || 'Guest';
   const greeting = getGreeting();
+
+  const handleInvitationSent = (_invitation: Invitation) => {
+    // Close modal after a short delay to show success message
+    setTimeout(() => {
+      setShowInviteModal(false);
+    }, 2000);
+  };
 
   const navButtons = [
     { id: 'calendar' as TabType, label: 'Calendar', description: 'View and manage reservations', icon: CalendarIcon },
     { id: 'maintenance' as TabType, label: 'Maintenance', description: 'Track upkeep tasks', icon: MaintenanceIcon },
     { id: 'gallery' as TabType, label: 'Photo Gallery', description: 'Browse photos', icon: GalleryIcon },
     { id: 'weather' as TabType, label: 'Weather', description: 'Check local conditions', icon: WeatherIcon },
+    { id: 'messages' as TabType, label: 'Message Board', description: 'Family updates', icon: MessageBoardIcon },
     { id: 'notifications' as TabType, label: 'Notifications', description: 'View recent updates', icon: NotificationsIcon },
     { id: 'important-info' as TabType, label: 'Important Info', description: 'Essential cabin information', icon: ImportantInfoIcon },
   ];
@@ -105,7 +131,43 @@ export const HomeTab: React.FC<HomeTabProps> = ({ onTabChange }) => {
             <span className={styles.navButtonDescription}>{item.description}</span>
           </button>
         ))}
+        
+        {/* Invite Family Button */}
+        <button
+          type="button"
+          className={styles.navButton}
+          onClick={() => setShowInviteModal(true)}
+        >
+          <span className={styles.navButtonIcon}>
+            <InviteIcon />
+          </span>
+          <span className={styles.navButtonLabel}>Invite Family</span>
+          <span className={styles.navButtonDescription}>Send an invitation</span>
+        </button>
       </div>
+
+      {/* Invite Modal */}
+      {showInviteModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowInviteModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>Invite Family Member</h2>
+              <button
+                type="button"
+                className={styles.modalClose}
+                onClick={() => setShowInviteModal(false)}
+                aria-label="Close modal"
+              >
+                ×
+              </button>
+            </div>
+            <InvitationForm
+              userId={user.id}
+              onInvitationSent={handleInvitationSent}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

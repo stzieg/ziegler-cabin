@@ -6,7 +6,7 @@ import { DashboardHeader } from './DashboardHeader';
 import { SidebarNavigation } from './SidebarNavigation';
 import styles from './FullScreenDashboard.module.css';
 
-export type TabType = 'home' | 'calendar' | 'maintenance' | 'gallery' | 'notifications' | 'important-info' | 'weather' | 'profile' | 'admin';
+export type TabType = 'home' | 'calendar' | 'maintenance' | 'gallery' | 'notifications' | 'important-info' | 'weather' | 'messages' | 'profile' | 'admin';
 
 interface FullScreenDashboardProps {
   initialTab?: TabType;
@@ -33,6 +33,7 @@ const GalleryTab = React.lazy(() => import('./tabs/GalleryTab').then(module => (
 const NotificationsTab = React.lazy(() => import('./tabs/NotificationsTab').then(module => ({ default: module.NotificationsTab })));
 const ImportantInfoTab = React.lazy(() => import('./tabs/ImportantInfoTab').then(module => ({ default: module.ImportantInfoTab })));
 const WeatherTab = React.lazy(() => import('./tabs/WeatherTab').then(module => ({ default: module.WeatherTab })));
+const MessageBoardTab = React.lazy(() => import('./tabs/MessageBoardTab').then(module => ({ default: module.MessageBoardTab })));
 const UserProfile = React.lazy(() => import('./UserProfile').then(module => ({ default: module.UserProfile })));
 const AdminPanel = React.lazy(() => import('./AdminPanel').then(module => ({ default: module.AdminPanel })));
 
@@ -78,6 +79,12 @@ const TAB_CONFIGS: TabConfig[] = [
     label: 'Weather',
     icon: '◆',
     component: WeatherTab,
+  },
+  {
+    id: 'messages',
+    label: 'Message Board',
+    icon: '◇',
+    component: MessageBoardTab,
   },
   {
     id: 'profile',
@@ -152,6 +159,7 @@ export const FullScreenDashboard: React.FC<FullScreenDashboardProps> = ({
     notifications: {},
     'important-info': {},
     weather: {},
+    messages: {},
     profile: {},
     admin: {},
   });

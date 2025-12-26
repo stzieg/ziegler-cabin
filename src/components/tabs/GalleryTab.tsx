@@ -691,6 +691,9 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
               e.stopPropagation();
               setSelectedPhoto(null);
             }}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+            }}
             onTouchEnd={(e) => {
               e.preventDefault();
               e.stopPropagation();

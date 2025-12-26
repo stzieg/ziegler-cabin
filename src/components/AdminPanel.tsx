@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/SupabaseProvider';
 import { InvitationForm } from './InvitationForm';
 import { InvitationList } from './InvitationList';
-import { EmailTester } from './EmailTester';
 import { UnlinkedReservations } from './UnlinkedReservations';
 import { isUserAdmin } from '../utils/supabase';
 import { getAllInvitations } from '../utils/invitations';
@@ -164,11 +163,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = () => {
         <section className={styles.section} aria-labelledby="unlinked-reservations-title">
           <h2 className={styles.sectionTitle} id="unlinked-reservations-title">Unlinked Reservations</h2>
           <UnlinkedReservations />
-        </section>
-
-        <section className={styles.section} aria-labelledby="email-tester-title">
-          <h2 className={styles.sectionTitle} id="email-tester-title">Email System Tester</h2>
-          <EmailTester />
         </section>
       </div>
     </main>

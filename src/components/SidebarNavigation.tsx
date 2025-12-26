@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '../contexts/SupabaseProvider';
 import styles from './SidebarNavigation.module.css';
 
-export type TabType = 'home' | 'calendar' | 'maintenance' | 'gallery' | 'notifications' | 'important-info' | 'weather' | 'profile' | 'admin';
+export type TabType = 'home' | 'calendar' | 'maintenance' | 'gallery' | 'notifications' | 'important-info' | 'weather' | 'messages' | 'profile' | 'admin';
 
 interface NavigationItem {
   id: TabType;
@@ -56,6 +56,12 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
   {
     id: 'important-info',
     label: 'Important Info',
+    icon: '',
+    section: 'main',
+  },
+  {
+    id: 'messages',
+    label: 'Message Board',
     icon: '',
     section: 'main',
   },
