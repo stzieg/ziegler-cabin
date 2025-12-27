@@ -49,16 +49,71 @@
   min-height: 0;
 }
 
+/* Swap Requests Toggle */
+.swapRequestsToggle {
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.toggleButton {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: var(--color-forest-green);
+  border: 1px solid var(--color-forest-green);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggleButton:hover {
+  background: rgba(45, 80, 22, 0.1);
+}
+
+.toggleButton.active {
+  background: var(--color-forest-green);
+  color: white;
+}
+
+/* Swap Requests Panel */
+.swapRequestsPanel {
+  margin-bottom: 1rem;
+  background: var(--glass-bg-content);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-height: 400px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .calendarTab {
     padding: 0.5rem;
   }
-  
+
   .notificationArea,
   .formStateIndicator {
     margin-bottom: 0.75rem;
     padding: 0.75rem;
+  }
+
+  .swapRequestsToggle {
+    margin-bottom: 0.75rem;
+  }
+
+  .toggleButton {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+  }
+
+  .swapRequestsPanel {
+    max-height: 50vh;
+    padding: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 }
 

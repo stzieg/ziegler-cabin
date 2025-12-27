@@ -1,5 +1,6 @@
 import { FullScreenDashboard, ErrorBoundary, AuthContainer, BackgroundProvider } from './components';
 import { SupabaseProvider, useAuth } from './contexts';
+import { SwapResponseHandler } from './components/SwapResponseHandler';
 import './App.css';
 
 /**
@@ -7,6 +8,15 @@ import './App.css';
  */
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
+
+  // Check if this is a swap response URL
+  const isSwapResponse = window.location.pathname === '/swap-response' || 
+    window.location.search.includes('token=') && window.location.search.includes('action=');
+
+  // Show swap response handler if on that route
+  if (isSwapResponse) {
+    return <SwapResponseHandler />;
+  }
 
   // Show loading state while checking authentication
   if (loading) {

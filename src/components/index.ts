@@ -61,3 +61,7 @@ export { WeatherForecastCompact } from './WeatherForecastCompact';
 
 
 export { UnlinkedReservations } from './UnlinkedReservations';
+
+export { SwapResponseHandler } from './SwapResponseHandler';
+
+export { SwapRequestsList } from './SwapRequestsList';

@@ -3,6 +3,7 @@ import type { User } from '@supabase/supabase-js';
 import type { Reservation } from '../../types/supabase';
 import { Calendar } from '../Calendar';
 import { ReservationScreen } from '../ReservationScreen';
+import { SwapRequestsList } from '../SwapRequestsList';
 import { ViewTransition } from '../ViewTransition';
 import { ViewStateProvider, useViewState } from '../../contexts/ViewStateProvider';
 import { supabase } from '../../utils/supabase';
@@ -19,6 +20,8 @@ interface CalendarTabProps {
  */
 const CalendarTabContent: React.FC<CalendarTabProps> = ({ user, isAdmin }) => {
   const [notifications, setNotifications] = useState<string[]>([]);
+  const [showSwapRequests, setShowSwapRequests] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { navigateToCalendar, clearReservationState, viewState, reservationState } = useViewState();
 
   /**
@@ -165,9 +168,30 @@ const CalendarTabContent: React.FC<CalendarTabProps> = ({ user, isAdmin }) => {
           </div>
         )}
 
+        {/* Swap Requests Toggle */}
+        <div className={styles.swapRequestsToggle}>
+          <button
+            className={`${styles.toggleButton} ${showSwapRequests ? styles.active : ''}`}
+            onClick={() => setShowSwapRequests(!showSwapRequests)}
+          >
+            {showSwapRequests ? 'Hide Swap Requests' : 'View Swap Requests'}
+          </button>
+        </div>
+
+        {/* Swap Requests Panel */}
+        {showSwapRequests && (
+          <div className={styles.swapRequestsPanel}>
+            <SwapRequestsList 
+              user={user} 
+              onSwapComplete={() => setRefreshKey(k => k + 1)}
+            />
+          </div>
+        )}
+
         {/* Main Calendar Component */}
         <div className={styles.calendarContainer}>
           <Calendar
+            key={refreshKey}
             user={user}
             isAdmin={isAdmin}
             onReservationCreate={handleReservationCreate}
