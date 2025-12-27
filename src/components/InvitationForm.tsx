@@ -265,6 +265,10 @@ export const InvitationForm: React.FC<InvitationFormProps> = ({
       <div id="submit-help" className={styles.helpText}>
         The invitation will be valid for 7 days and include a registration link.
       </div>
+      
+      <div className={styles.junkMailNotice}>
+        <strong>Note:</strong> The invitation email may appear in the recipient's junk or spam folder. Please let them know to check there if they don't see it in their inbox.
+      </div>
     </form>
   );
 };
