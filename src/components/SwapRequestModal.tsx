@@ -76,23 +76,18 @@ export const SwapRequestModal: React.FC<SwapRequestModalProps> = ({
         return;
       }
 
-      // Get target user's email and name
+      // Get target user's email and name from profiles
       const { data: targetProfile } = await supabase
         .from('profiles')
-        .select('first_name, last_name')
+        .select('first_name, last_name, email')
         .eq('id', targetReservation.user_id)
         .single();
 
       if (targetProfile) {
         setTargetUserName(`${targetProfile.first_name} ${targetProfile.last_name}`);
-      }
-
-      // Get target user's email from auth (need to use a different approach)
-      // For now, we'll need to store email in profiles or use a server function
-      // Let's check if we have it in the profiles table
-      const { data: authData } = await supabase.auth.admin?.getUserById(targetReservation.user_id) || {};
-      if (authData?.user?.email) {
-        setTargetUserEmail(authData.user.email);
+        if (targetProfile.email) {
+          setTargetUserEmail(targetProfile.email);
+        }
       }
 
       // Get current user's name
@@ -143,11 +138,7 @@ export const SwapRequestModal: React.FC<SwapRequestModalProps> = ({
       if (createError) throw createError;
 
       // Get target user's email for sending notification
-      // We need to fetch this from a secure endpoint or have it stored
-      const { data: targetAuth } = await supabase
-        .rpc('get_user_email', { user_id: targetReservation.user_id });
-
-      const recipientEmail = targetAuth || targetUserEmail;
+      const recipientEmail = targetUserEmail;
 
       if (recipientEmail) {
         // Generate email content
