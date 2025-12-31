@@ -53,5 +53,3 @@ This is a private family app. To get access:
 3. Click the registration link and create your account
 
 ---
-
-Made with ❤️ for the Ziegler family
