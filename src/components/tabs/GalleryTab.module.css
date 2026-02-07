@@ -507,9 +507,9 @@
 }
 
 .fullScreenCloseButton {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+  right: calc(env(safe-area-inset-right, 0px) + 0.75rem);
   background: rgba(0, 0, 0, 0.7);
   color: white;
   border: none;
@@ -761,8 +761,8 @@
   }
 
   .fullScreenCloseButton {
-    top: 0.75rem;
-    right: 0.75rem;
+    top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
+    right: calc(env(safe-area-inset-right, 0px) + 0.5rem);
     width: 60px;
     height: 60px;
     font-size: 2rem;
