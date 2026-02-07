@@ -942,9 +942,6 @@ export const Weather: React.FC<WeatherProps> = ({
                   </div>
                 </div>
               </div>
-              {selectedDay.summary && (
-                <p className={styles.daySummary}>{selectedDay.summary}</p>
-              )}
               {(() => {
                 const recommendation = getActivityRecommendation(selectedDay);
                 return (
