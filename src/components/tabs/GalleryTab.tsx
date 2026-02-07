@@ -684,27 +684,29 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
         >
           <div className={styles.fullScreenBackground} />
           <div className={styles.fullScreenContent} onClick={(e) => e.stopPropagation()}>
-            <button
-              className={styles.fullScreenCloseButton}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setSelectedPhoto(null);
-              }}
-              onTouchStart={(e) => {
-                e.stopPropagation();
-              }}
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setSelectedPhoto(null);
-              }}
-              aria-label="Close full-screen photo viewer"
-              title="Close"
-              type="button"
-            >
-              ✕
-            </button>
+            <div className={styles.fullScreenHeader}>
+              <button
+                className={styles.fullScreenCloseButton}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setSelectedPhoto(null);
+                }}
+                onTouchStart={(e) => {
+                  e.stopPropagation();
+                }}
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setSelectedPhoto(null);
+                }}
+                aria-label="Close full-screen photo viewer"
+                title="Close"
+                type="button"
+              >
+                ✕
+              </button>
+            </div>
             
             {/* Navigation Arrows */}
             {filteredPhotos.length > 1 && (
