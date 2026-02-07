@@ -457,12 +457,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 2000;
+  z-index: 11000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem;
   cursor: pointer;
+  --gallery-close-offset: 0px;
 }
 
 .fullScreenBackground {
@@ -507,12 +508,17 @@
 }
 
 .fullScreenHeader {
-  position: sticky;
+  position: absolute;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 20;
   display: flex;
   justify-content: flex-end;
-  padding: calc(env(safe-area-inset-top, 0px) + 0.5rem) calc(env(safe-area-inset-right, 0px) + 0.5rem) 0.5rem 0.5rem;
+  padding: calc(env(safe-area-inset-top, 0px) + var(--gallery-close-offset) + 0.5rem)
+    calc(env(safe-area-inset-right, 0px) + 0.5rem)
+    0.5rem
+    0.5rem;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0));
   pointer-events: none;
 }
@@ -760,6 +766,7 @@
 @media (max-width: 768px) {
   .fullScreenPhotoViewer {
     padding: 0;
+    --gallery-close-offset: 3.75rem;
   }
 
   .fullScreenContent {
