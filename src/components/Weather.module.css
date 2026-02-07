@@ -50,7 +50,9 @@
 }
 
 .errorIcon {
-  font-size: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .retryButton {
@@ -88,6 +90,12 @@
   color: #2c3e50;
   font-size: 1.25rem;
   font-weight: 600;
+}
+
+.locationTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .lastUpdated {
@@ -161,6 +169,9 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .value {
@@ -178,6 +189,10 @@
   border-radius: 8px;
   font-weight: 500;
   font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 /* Forecast */
@@ -278,7 +293,9 @@
 }
 
 .precipIcon {
-  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Daily Forecast */
@@ -441,7 +458,9 @@
 }
 
 .alertIcon {
-  font-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
@@ -472,6 +491,9 @@
   font-size: 0.75rem;
   color: #4a90e2;
   margin-top: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 /* Day Details Panel */
@@ -644,7 +666,9 @@
 }
 
 .activityIcon {
-  font-size: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
@@ -701,6 +725,55 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.activityReasonList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.activityTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(45, 80, 22, 0.08);
+  font-size: 0.7rem;
+  color: #2c3e50;
+}
+
+.inlineIcon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+}
+
+.labelIcon {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+.iconSm {
+  width: 1rem;
+  height: 1rem;
+}
+
+.iconLg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.tagIcon {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.warningTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 @media (max-width: 600px) {

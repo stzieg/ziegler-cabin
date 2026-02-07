@@ -101,12 +101,12 @@ export const HomeTab: React.FC<HomeTabProps> = ({ user, onTabChange }) => {
 
   const navButtons = [
     { id: 'calendar' as TabType, label: 'Calendar', description: 'View and manage reservations', icon: CalendarIcon },
-    { id: 'maintenance' as TabType, label: 'Maintenance', description: 'Track upkeep tasks', icon: MaintenanceIcon },
+    { id: 'maintenance' as TabType, label: 'Maintenance', description: 'Track maintenance tasks', icon: MaintenanceIcon },
     { id: 'gallery' as TabType, label: 'Photo Gallery', description: 'Browse photos', icon: GalleryIcon },
     { id: 'weather' as TabType, label: 'Weather', description: 'Check local conditions', icon: WeatherIcon },
-    { id: 'messages' as TabType, label: 'Message Board', description: 'Family updates', icon: MessageBoardIcon },
-    { id: 'notifications' as TabType, label: 'Notifications', description: 'View recent updates', icon: NotificationsIcon },
-    { id: 'important-info' as TabType, label: 'Important Info', description: 'Essential cabin information', icon: ImportantInfoIcon },
+    { id: 'messages' as TabType, label: 'Message Board', description: 'Post messages', icon: MessageBoardIcon },
+    { id: 'notifications' as TabType, label: 'Notifications', description: 'View updates', icon: NotificationsIcon },
+    { id: 'important-info' as TabType, label: 'Important Info', description: 'Essential information', icon: ImportantInfoIcon },
   ];
 
   return (
