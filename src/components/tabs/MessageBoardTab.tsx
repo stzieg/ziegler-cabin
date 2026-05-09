@@ -5,6 +5,9 @@ import {
   getMessages,
   createMessage,
   deleteMessage,
+  toggleMessageLike,
+  createMessageComment,
+  deleteMessageComment,
   subscribeToMessages,
   formatMessageTime,
   type Message
@@ -24,6 +27,8 @@ export const MessageBoardTab: React.FC<MessageBoardTabProps> = ({ user }) => {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
+  const [commentSubmitting, setCommentSubmitting] = useState<Record<string, boolean>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -42,23 +47,74 @@ export const MessageBoardTab: React.FC<MessageBoardTabProps> = ({ user }) => {
       },
       (deletedId) => {
         setMessages(prev => prev.filter(m => m.id !== deletedId));
+      },
+      () => {
+        loadMessages();
       }
     );
 
     return unsubscribe;
-  }, []);
+  }, [user.id]);
 
   const loadMessages = async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getMessages(100);
+      const data = await getMessages(100, user.id);
       setMessages(data);
     } catch (err) {
       console.error('Error loading messages:', err);
       setError('Failed to load messages');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLikeClick = async (message: Message) => {
+    setMessages(prev => prev.map(item => {
+      if (item.id !== message.id) return item;
+
+      return {
+        ...item,
+        liked_by_current_user: !item.liked_by_current_user,
+        like_count: item.like_count + (item.liked_by_current_user ? -1 : 1)
+      };
+    }));
+
+    try {
+      await toggleMessageLike(message.id, user.id, message.liked_by_current_user);
+    } catch (err) {
+      console.error('Error updating like:', err);
+      setError('Failed to update like');
+      await loadMessages();
+    }
+  };
+
+  const handleCommentSubmit = async (messageId: string) => {
+    const content = (commentDrafts[messageId] || '').trim();
+    if (!content || commentSubmitting[messageId]) return;
+
+    try {
+      setCommentSubmitting(prev => ({ ...prev, [messageId]: true }));
+      setError(null);
+      await createMessageComment(messageId, user.id, content);
+      setCommentDrafts(prev => ({ ...prev, [messageId]: '' }));
+      await loadMessages();
+    } catch (err) {
+      console.error('Error adding comment:', err);
+      setError('Failed to add comment');
+    } finally {
+      setCommentSubmitting(prev => ({ ...prev, [messageId]: false }));
+    }
+  };
+
+  const handleCommentDelete = async (commentId: string) => {
+    try {
+      await deleteMessageComment(commentId);
+      await loadMessages();
+    } catch (err) {
+      console.error('Error deleting comment:', err);
+      setError('Failed to delete comment');
     }
   };
 
@@ -184,6 +240,78 @@ export const MessageBoardTab: React.FC<MessageBoardTabProps> = ({ user }) => {
                 </div>
               </div>
               <p className={styles.messageContent}>{message.content}</p>
+              <div className={styles.messageActions}>
+                <button
+                  type="button"
+                  className={`${styles.likeButton} ${message.liked_by_current_user ? styles.likeButtonActive : ''}`}
+                  onClick={() => handleLikeClick(message)}
+                  aria-pressed={message.liked_by_current_user}
+                  aria-label={message.liked_by_current_user ? 'Unlike message' : 'Like message'}
+                >
+                  <svg className={styles.likeIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M7 10v11" />
+                    <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
+                  </svg>
+                  {message.like_count > 0 && (
+                    <span className={styles.likeCountBadge}>{message.like_count}</span>
+                  )}
+                </button>
+                <span className={styles.commentCount}>
+                  {message.comments.length} comment{message.comments.length === 1 ? '' : 's'}
+                </span>
+              </div>
+
+              <div className={styles.commentsSection}>
+                {message.comments.length > 0 && (
+                  <div className={styles.commentsList}>
+                    {message.comments.map((comment) => (
+                      <div key={comment.id} className={styles.commentItem}>
+                        <div className={styles.commentHeader}>
+                          <span className={styles.commentAuthor}>{comment.author_name}</span>
+                          <div className={styles.commentMeta}>
+                            <span>{formatMessageTime(comment.created_at)}</span>
+                            {(comment.user_id === user.id || isAdmin) && (
+                              <button
+                                type="button"
+                                className={styles.commentDeleteButton}
+                                onClick={() => handleCommentDelete(comment.id)}
+                                aria-label="Delete comment"
+                              >
+                                Delete
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        <p className={styles.commentContent}>{comment.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <form
+                  className={styles.commentForm}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleCommentSubmit(message.id);
+                  }}
+                >
+                  <input
+                    className={styles.commentInput}
+                    value={commentDrafts[message.id] || ''}
+                    onChange={(e) => setCommentDrafts(prev => ({ ...prev, [message.id]: e.target.value }))}
+                    placeholder="Write a comment..."
+                    disabled={commentSubmitting[message.id]}
+                    maxLength={500}
+                  />
+                  <button
+                    type="submit"
+                    className={styles.commentButton}
+                    disabled={!commentDrafts[message.id]?.trim() || commentSubmitting[message.id]}
+                  >
+                    Comment
+                  </button>
+                </form>
+              </div>
             </div>
           ))
         )}
