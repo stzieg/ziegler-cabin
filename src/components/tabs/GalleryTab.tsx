@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../../utils/supabase';
+import { createNotificationForAllUsers } from '../../utils/notifications';
 import type { Photo, PhotoMetadata } from '../../types';
 import styles from './GalleryTab.module.css';
 
@@ -141,6 +142,7 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
       setUploadProgress({ current: 0, total: selectedFiles.length });
 
       const errors: string[] = [];
+      let uploadedCount = 0;
 
       for (let i = 0; i < selectedFiles.length; i++) {
         const file = selectedFiles[i];
@@ -201,9 +203,26 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
             // Try to clean up the uploaded file
             await supabase.storage.from('photos').remove([fileName]);
             errors.push(`${file.name}: ${dbError.message}`);
+          } else {
+            uploadedCount += 1;
           }
         } catch (err) {
           errors.push(`${file.name}: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        }
+      }
+
+      let notificationError: string | null = null;
+      if (uploadedCount > 0) {
+        try {
+          const uploaderName = await getUploaderName(user);
+          await createNotificationForAllUsers(
+            uploadedCount === 1 ? 'New Photo Uploaded' : 'New Photos Uploaded',
+            `${uploaderName} uploaded ${uploadedCount === 1 ? 'a new photo' : `${uploadedCount} new photos`} to the gallery`,
+            'general'
+          );
+        } catch (err) {
+          console.error('Error creating photo upload notification:', err);
+          notificationError = err instanceof Error ? err.message : 'Unknown notification error';
         }
       }
 
@@ -219,6 +238,8 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
 
       if (errors.length > 0) {
         setError(`Some uploads failed:\n${errors.join('\n')}`);
+      } else if (notificationError) {
+        setError(`Photos uploaded, but the notification was not sent: ${notificationError}`);
       }
       
     } catch (err) {
@@ -228,6 +249,20 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({ user, formState, isAdmin
       setUploading(false);
       setUploadProgress(null);
     }
+  };
+
+  const getUploaderName = async (currentUser: User): Promise<string> => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('first_name, last_name')
+      .eq('id', currentUser.id)
+      .single();
+
+    const profileName = data
+      ? `${data.first_name || ''} ${data.last_name || ''}`.trim()
+      : '';
+
+    return profileName || currentUser.email || 'A user';
   };
 
   /**
