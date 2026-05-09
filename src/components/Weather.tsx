@@ -120,9 +120,10 @@ const IconSnowflake = ({ className }: { className?: string }) => (
 
 const IconFish = ({ className }: { className?: string }) => (
   <IconBase className={className}>
-    <path d="M7 12s4 0 6-2 4-2 7-2c-1 4-1 8 0 12-3 0-5 0-7-2s-6-2-6-2" />
-    <path d="M7 10l-4-4 1 6-1 6 4-4" />
-    <circle cx="15" cy="10" r="1" />
+    <path d="M6.5 12c1.2-3.2 4.5-5.5 8.2-5.5 3.7 0 6.8 2.4 8.3 5.5-1.5 3.1-4.6 5.5-8.3 5.5-3.7 0-7-2.3-8.2-5.5z" />
+    <path d="M6.5 12 2.5 8v8l4-4z" />
+    <path d="M12 9.5c-.8.6-1.3 1.5-1.3 2.5s.5 1.9 1.3 2.5" />
+    <circle cx="17.5" cy="10.5" r="0.7" fill="currentColor" stroke="none" />
   </IconBase>
 );
 
